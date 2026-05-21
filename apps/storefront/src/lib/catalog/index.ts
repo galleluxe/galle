@@ -27,7 +27,14 @@ async function fetchPublishedProducts(): Promise<Product[]> {
       limit: 20,
     });
 
-    if (variants.length === 0) continue;
+    if (variants.length === 0) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn(
+          `[catalog] "${String(raw.title)}" is published but hidden — add a Product Variant linked to this product with isAvailable checked.`,
+        );
+      }
+      continue;
+    }
 
     const product = mapPayloadToProduct(
       raw as unknown as Record<string, unknown>,

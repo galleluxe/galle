@@ -3,7 +3,7 @@ import { PageShell } from "./page-shell";
 
 export function Footer() {
   return (
-    <footer className="bg-surface-container-low border-t border-outline-variant/30 mt-section-gap pb-28 md:pb-16">
+    <footer className="bg-surface-container-low border-t border-outline-variant/30 mt-section-gap pb-16">
       <PageShell className="py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="md:col-span-2">
           <p className="font-headline-md text-headline-md tracking-[0.3em] text-primary uppercase mb-4">

@@ -127,7 +127,7 @@ export function mapPayloadToProduct(
 
   return {
     id: String(raw.id),
-    handle: String(raw.handle),
+    handle: String(raw.handle).replace(/^\/+|\/+$/g, ""),
     title: String(raw.title),
     subtitle: raw.subtitle ? String(raw.subtitle) : undefined,
     description: String(raw.description ?? ""),

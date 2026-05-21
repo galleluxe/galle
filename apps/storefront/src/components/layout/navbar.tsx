@@ -1,15 +1,10 @@
 import Link from "next/link";
 import { CartButton } from "./cart-button";
 import { MobileMenu } from "./mobile-menu";
+import { NavLinks } from "./nav-links";
 import { SearchButton } from "@/features/search/components/search-button";
 import { getCart } from "@/features/cart/server/store";
 import { cn } from "@/lib/utils";
-
-const NAV_LINKS = [
-  { href: "/shop", label: "Boutique" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/about", label: "Atelier" },
-] as const;
 
 interface NavbarProps {
   pathname: string;
@@ -30,22 +25,7 @@ export async function Navbar({ pathname }: NavbarProps) {
           GALLE
         </Link>
 
-        <nav className="hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "font-label-caps text-label-caps transition-colors duration-300 relative",
-                pathname.startsWith(link.href)
-                  ? "text-primary after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-secondary"
-                  : "text-outline hover:text-secondary",
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <NavLinks />
 
         <div className="flex items-center gap-4">
           <SearchButton />

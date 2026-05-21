@@ -68,10 +68,6 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
-      <PageShell>
-        <HomeReviewsSection />
-      </PageShell>
-
       <section className="mb-section-gap">
         <PageShell>
           <div className="text-center mb-12">
@@ -153,6 +149,12 @@ export default async function HomePage() {
               <Link href="/journal">Read All</Link>
             </Button>
           </div>
+        </PageShell>
+      </section>
+
+      <section className="mb-section-gap">
+        <PageShell>
+          <HomeReviewsSection />
         </PageShell>
       </section>
 

@@ -69,10 +69,10 @@ export function ProductReviews({
           <Eyebrow className="mb-2">Maison Voices</Eyebrow>
           <Headline size="sm">Reviews</Headline>
           {average !== null && (
-            <p className="mt-2 font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+            <div className="mt-2 font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
               <Stars rating={Math.round(average)} />
               <span>{average} · {reviews.length} reviews</span>
-            </p>
+            </div>
           )}
         </div>
         {showProductLink && (

@@ -123,8 +123,6 @@ export default async function ProductPage({ params }: PDPProps) {
         </Reveal>
       )}
 
-      <ProductReviews productHandle={product.handle} productTitle={product.title} />
-
       {related.length > 0 && (
         <section>
           <Headline className="mb-8 text-center">You May Also Love</Headline>
@@ -135,6 +133,8 @@ export default async function ProductPage({ params }: PDPProps) {
           </ProductGrid>
         </section>
       )}
+            <ProductReviews productHandle={product.handle} productTitle={product.title} />
+
     </PageShell>
   );
 }
