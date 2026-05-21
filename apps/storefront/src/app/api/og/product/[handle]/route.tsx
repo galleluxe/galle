@@ -32,6 +32,7 @@ export async function GET(
           fontFamily: "serif",
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse/Satori requires native img */}
         <img
           src={imgSrc}
           alt={title}
