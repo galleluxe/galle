@@ -35,9 +35,6 @@ export default function AccountPage() {
           <span className="material-symbols-outlined text-xl">info</span>
           <p className="font-label-caps text-xs uppercase tracking-widest font-semibold">Atelier Accounts</p>
         </div>
-        <BodyText className="text-xs text-on-surface-variant/80">
-          Registered customer accounts with olfactory wishlists, fragrance subscriptions, and member-exclusive early-access collections are currently under active curation. Stay tuned.
-        </BodyText>
       </div>
 
       <div className="pt-4">
