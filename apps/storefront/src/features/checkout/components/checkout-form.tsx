@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { completeOrderAction } from "../server/actions";
+import { completeOrderAction, prepareCheckoutAction } from "../server/actions";
 import type { Cart } from "@/lib/catalog/types";
 import { formatINR } from "@/lib/money";
 
@@ -55,11 +55,12 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
   };
 
   const finishOrder = useCallback(
-    async (razorpayPaymentId: string) => {
+    async (razorpayPaymentId: string, razorpayOrderId: string) => {
       try {
         const result = await completeOrderAction({
           ...form,
           razorpayPaymentId,
+          razorpayOrderId,
         });
 
         if (result?.success) {
@@ -97,12 +98,14 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
     setStep("paying");
 
     try {
+      const checkout = await prepareCheckoutAction();
       await loadRazorpayScript();
 
       const rzp = new window.Razorpay({
         key,
-        amount: cart.subtotalPaise,
+        amount: checkout.amountPaise,
         currency: "INR",
+        order_id: checkout.razorpayOrderId,
         name: "GALLE",
         description: "GALLE fragrance order",
         prefill: {
@@ -112,7 +115,10 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
         },
         theme: { color: "#6F5959" },
         handler: (response) => {
-          void finishOrder(response.razorpay_payment_id);
+          void finishOrder(
+            response.razorpay_payment_id,
+            response.razorpay_order_id ?? checkout.razorpayOrderId,
+          );
         },
         modal: {
           ondismiss: () => {

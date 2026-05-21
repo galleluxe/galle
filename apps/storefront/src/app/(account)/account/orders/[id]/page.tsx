@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/layout/page-shell";
 import { Headline, BodyText, Eyebrow } from "@/components/typography/display";
-import { getCustomer } from "@/features/auth/server/session";
+import { getSessionCustomer } from "@/features/auth/server/session";
 import { getOrderDetails } from "@/features/account/server/actions";
 import { formatINR } from "@/lib/money";
 
@@ -12,7 +12,7 @@ interface OrderDetailPageProps {
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { id } = await params;
-  const customer = await getCustomer();
+  const customer = await getSessionCustomer();
 
   if (!customer) {
     return (
@@ -95,16 +95,16 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           <span>Subtotal</span>
           <span className="tabular-nums">{formatINR(order.subtotal || 0)}</span>
         </div>
-        {order.shipping_total > 0 && (
+        {(order.shipping_total ?? 0) > 0 && (
           <div className="flex justify-between font-body-md text-sm text-on-surface-variant">
             <span>Shipping</span>
-            <span className="tabular-nums">{formatINR(order.shipping_total)}</span>
+            <span className="tabular-nums">{formatINR(order.shipping_total ?? 0)}</span>
           </div>
         )}
-        {order.tax_total > 0 && (
+        {(order.tax_total ?? 0) > 0 && (
           <div className="flex justify-between font-body-md text-sm text-on-surface-variant">
             <span>GST / Tax</span>
-            <span className="tabular-nums">{formatINR(order.tax_total)}</span>
+            <span className="tabular-nums">{formatINR(order.tax_total ?? 0)}</span>
           </div>
         )}
         <div className="flex justify-between font-headline-sm text-base text-primary border-t border-outline-variant/30 pt-3">

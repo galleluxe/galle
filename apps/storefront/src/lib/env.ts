@@ -1,45 +1,50 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  NEXT_PUBLIC_MEDUSA_URL: z.string().url().default("http://localhost:9000"),
-  NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: z.string().min(1),
-  MEDUSA_BACKEND_URL: z.string().url().default("http://localhost:9000"),
+  PAYLOAD_SECRET: z.string().min(1).optional(),
+  DATABASE_URL: z.string().min(1).optional(),
   REVALIDATE_SECRET: z.string().min(1).default("galle_revalidate_secret"),
   RESEND_API_KEY: z.string().optional(),
-  DATABASE_URL: z.string().optional(),
-  NEXT_PUBLIC_IMAGEKIT_ENDPOINT: z.string().url().default("https://ik.imagekit.io/galleluxe"),
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  NEXT_PUBLIC_RAZORPAY_KEY_ID: z.string().optional(),
+  NEXT_PUBLIC_IMAGEKIT_ENDPOINT: z
+    .string()
+    .url()
+    .default("https://ik.imagekit.io/galleluxe"),
+  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
 });
 
 const processEnv = {
-  NEXT_PUBLIC_MEDUSA_URL: process.env.NEXT_PUBLIC_MEDUSA_URL,
-  NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
-  MEDUSA_BACKEND_URL: process.env.MEDUSA_BACKEND_URL,
+  PAYLOAD_SECRET: process.env.PAYLOAD_SECRET,
+  DATABASE_URL: process.env.DATABASE_URL,
   REVALIDATE_SECRET: process.env.REVALIDATE_SECRET,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
-  DATABASE_URL: process.env.DATABASE_URL,
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+  NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
   NEXT_PUBLIC_IMAGEKIT_ENDPOINT: process.env.NEXT_PUBLIC_IMAGEKIT_ENDPOINT,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 };
 
-// Validate environment variables
 const parsed = envSchema.safeParse(processEnv);
 
 if (!parsed.success) {
   console.error(
-    "❌ Invalid environment variables:",
-    JSON.stringify(parsed.error.format(), null, 2)
+    "Invalid environment variables:",
+    JSON.stringify(parsed.error.format(), null, 2),
   );
-  // Fail-safe default for non-production environments to avoid stopping Next.js builds completely
   if (process.env.NODE_ENV === "production") {
     throw new Error("Invalid environment variables");
   }
 }
 
-export const env = parsed.success ? parsed.data : envSchema.parse({
-  NEXT_PUBLIC_MEDUSA_URL: "http://localhost:9000",
-  NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: "pk_mock_key_for_build",
-  MEDUSA_BACKEND_URL: "http://localhost:9000",
-  REVALIDATE_SECRET: "galle_revalidate_secret",
-  NEXT_PUBLIC_IMAGEKIT_ENDPOINT: "https://ik.imagekit.io/galleluxe",
-});
+export const env = parsed.success
+  ? parsed.data
+  : envSchema.parse({
+      REVALIDATE_SECRET: "galle_revalidate_secret",
+      NEXT_PUBLIC_IMAGEKIT_ENDPOINT: "https://ik.imagekit.io/galleluxe",
+    });
+
 export type Env = z.infer<typeof envSchema>;
 export default env;

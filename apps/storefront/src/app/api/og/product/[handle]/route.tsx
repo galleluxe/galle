@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getProduct } from "@/lib/catalog";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export async function GET(
   _req: Request,

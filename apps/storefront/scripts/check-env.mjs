@@ -24,25 +24,27 @@ function loadEnv(path) {
 }
 
 const checks = [
-  ["NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY", "Medusa storefront API"],
-  ["NEXT_PUBLIC_MEDUSA_URL", "Medusa URL (local or tunnel)"],
+  ["PAYLOAD_SECRET", "Payload CMS auth"],
+  ["DATABASE_URL", "Neon Postgres (Payload + Drizzle)"],
   ["NEXT_PUBLIC_IMAGEKIT_ENDPOINT", "ImageKit CDN"],
-  ["IMAGEKIT_PRIVATE_KEY", "ImageKit private"],
   ["RESEND_API_KEY", "Resend email"],
-  ["NEXT_PUBLIC_RAZORPAY_KEY_ID", "Razorpay checkout"],
-  ["DATABASE_URL", "Drizzle (newsletter/quiz)"],
+  ["NEXT_PUBLIC_RAZORPAY_KEY_ID", "Razorpay checkout (public)"],
+  ["RAZORPAY_KEY_ID", "Razorpay server"],
+  ["RAZORPAY_KEY_SECRET", "Razorpay server secret"],
   ["REVALIDATE_SECRET", "ISR cache bust"],
 ];
 
 const env = loadEnv(envPath);
 
 console.log("\nGALLE storefront env check");
-console.log(`File: ${existsSync(envPath) ? envPath : "(missing — copy .env.example → .env.local)"}\n`);
+console.log(
+  `File: ${existsSync(envPath) ? envPath : "(missing — copy .env.example → .env.local)"}\n`,
+);
 
 for (const [key, label] of checks) {
   const val = env[key];
   const ok = val && val.length > 0 && !val.includes("...");
-  console.log(`${ok ? "✓" : "○"} ${label.padEnd(28)} ${key}`);
+  console.log(`${ok ? "✓" : "○"} ${label.padEnd(32)} ${key}`);
 }
 
-console.log("\nMedusa keys live in apps/medusa/.env — start Medusa with: pnpm --filter @galle/medusa dev\n");
+console.log("\nAdmin: http://localhost:3000/admin\n");

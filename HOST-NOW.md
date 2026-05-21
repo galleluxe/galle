@@ -1,8 +1,8 @@
-# Host Galle now (everything except Medusa)
+# Host Galle now (Vercel + Neon)
 
-Medusa stays on your PC (`localhost:9000`). This guide deploys **storefront + Neon + Upstash** first. Skip DigitalOcean until Phase 5 in [LAUNCH-LOCAL-FIRST.md](./LAUNCH-LOCAL-FIRST.md).
+Single Next.js app with Payload CMS and Drizzle on one Neon database (`storefront`). No separate commerce server.
 
-**Time:** ~45 minutes if you do steps in order.
+**Time:** ~30 minutes if you do steps in order.
 
 ---
 
@@ -12,204 +12,120 @@ Medusa stays on your PC (`localhost:9000`). This guide deploys **storefront + Ne
 
    ```powershell
    cd galle
+   pnpm install
    pnpm --filter @galle/storefront build
    ```
 
-2. You need accounts (all have free tiers):
+2. Accounts (free tiers):
    - [Vercel](https://vercel.com) — storefront
-   - [Neon](https://neon.tech) — Postgres for Medusa + Drizzle
-   - [Upstash](https://upstash.com) — Redis for Medusa (optional while Medusa is local)
+   - [Neon](https://neon.tech) — Postgres (Payload + Drizzle)
    - [GitHub](https://github.com) — connect Vercel to repo
 
-3. **Rotate secrets** you pasted in chat before going live (Razorpay, Resend, ImageKit, Shiprocket).
+3. **Rotate secrets** you pasted in chat before going live (Razorpay, Resend, ImageKit, `PAYLOAD_SECRET`).
 
 ---
 
-## Step 1 — Push code to GitHub
-
-From `galle` (monorepo root):
-
-```powershell
-git init
-git add .
-git commit -m "Initial Galle monorepo"
-gh repo create galle --private --source=. --push
-```
-
-Use your own repo name if `galle` is taken.
-
----
-
-## Step 2 — Neon (two databases)
+## Step 1 — Neon (one database)
 
 1. Neon → New project → region **Singapore** (or closest to India).
-2. Create databases **`medusa`** and **`galle`** (SQL editor: `CREATE DATABASE medusa;` / `CREATE DATABASE galle;`).
-3. Copy connection strings.
+2. Use the default database or create **`storefront`**:
 
-**Local Medusa** (`apps/medusa/.env`):
-
-```env
-DATABASE_URL=postgresql://...@ep-....neon.tech/medusa?sslmode=require
-```
-
-Then:
-
-```powershell
-pnpm --filter @galle/medusa db:migrate
-pnpm --filter @galle/medusa seed
-```
-
-**Local storefront** (`apps/storefront/.env.local`):
-
-```env
-DATABASE_URL=postgresql://...@ep-....neon.tech/galle?sslmode=require
-```
-
-Then:
-
-```powershell
-cd apps/storefront
-npx drizzle-kit push
-```
-
-You can stop Docker Postgres once both apps use Neon.
-
----
-
-## Step 3 — Upstash Redis (Medusa local, cloud Redis)
-
-1. Upstash → Redis → region **ap-south-1** if available.
-2. Copy **TLS** URL into `apps/medusa/.env`:
-
-   ```env
-   REDIS_URL=rediss://default:...@....upstash.io:6379
+   ```sql
+   CREATE DATABASE storefront;
    ```
 
-3. Restart Medusa: `pnpm --filter @galle/medusa dev`.
+3. In the Neon dashboard, copy the **pooled** connection string and set the database name to `storefront`:
+
+   ```env
+   DATABASE_URL=postgresql://...@ep-....neon.tech/storefront?sslmode=require
+   ```
+
+4. Apply Drizzle tables (newsletter, etc.) if not already done:
+
+   ```powershell
+   cd apps/storefront
+   npx drizzle-kit push
+   ```
+
+   Or run `scripts/neon-storefront-schema.sql` in the Neon SQL editor.
+
+5. Payload creates its own prefixed tables on first dev/build (`push: true` in non-production). In production, run migrations or a one-off deploy with `push` enabled once if needed.
 
 ---
 
-## Step 4 — Deploy storefront on Vercel
+## Step 2 — Local env
 
-### 4a. Import project
-
-1. [vercel.com/new](https://vercel.com/new) → Import your GitHub repo.
-2. **Root Directory:** `apps/storefront` (important).
-3. Framework: Next.js. Build settings are in `apps/storefront/vercel.json` (install/build from monorepo root).
-
-### 4b. Environment variables (Vercel → Settings → Environment Variables)
-
-Copy from `apps/storefront/.env.local`. Use **Production** and **Preview** for all unless noted.
+`apps/storefront/.env.local` (see `.env.example`):
 
 | Variable | Notes |
 |----------|--------|
-| `MEDUSA_BACKEND_URL` | See Step 5 — not `localhost` on Vercel |
-| `NEXT_PUBLIC_MEDUSA_URL` | Same as above |
-| `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` | From `npx medusa exec ./src/scripts/create-key.ts` |
-| `NEXT_PUBLIC_SITE_URL` | `https://your-project.vercel.app` until custom domain |
-| `DATABASE_URL` | Neon **`galle`** connection string |
-| `REVALIDATE_SECRET` | Same value as in Medusa `.env` |
-| `RESEND_API_KEY` | Resend dashboard |
-| `RESEND_FROM_EMAIL` | `GALLE <onboarding@resend.dev>` until domain verified |
-| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Test key for preview; live later |
-| `NEXT_PUBLIC_IMAGEKIT_ENDPOINT` | `https://ik.imagekit.io/galleluxe` |
-| `IMAGEKIT_PRIVATE_KEY` | ImageKit |
-| `NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY` | ImageKit |
-| `NEXT_PUBLIC_SENTRY_DSN` | Optional |
-| `AXIOM_TOKEN` | Optional |
-
-Do **not** commit `.env.local` to Git.
-
-### 4c. Deploy
-
-Click Deploy. Fix any build errors from the Vercel log (same as local `pnpm --filter @galle/storefront build`).
-
----
-
-## Step 5 — Shop on Vercel (pick one)
-
-Vercel cannot reach `localhost:9000`. Choose:
-
-### Option A — Marketing site only (fastest)
-
-Leave Medusa URLs unset or use a placeholder. Home, legal, newsletter, and contact work via Neon. **Shop/cart will be empty** until Medusa is public.
-
-### Option B — Cloudflare tunnel (test full shop)
-
-On your PC while Medusa runs:
+| `DATABASE_URL` | Neon **`storefront`** — same DB for Payload + Drizzle |
+| `PAYLOAD_SECRET` | Long random string |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` locally |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Razorpay test key |
+| `RAZORPAY_KEY_ID` | Server-side (same or live key) |
+| `RAZORPAY_KEY_SECRET` | Server-side only |
+| `RESEND_API_KEY` | Resend |
+| `REVALIDATE_SECRET` | Any secret string |
+| ImageKit vars | As in `.env.example` |
 
 ```powershell
-cloudflared tunnel --url http://localhost:9000
+pnpm --filter @galle/storefront dev
 ```
 
-Use the `https://....trycloudflare.com` URL in Vercel:
-
-```env
-NEXT_PUBLIC_MEDUSA_URL=https://....trycloudflare.com
-MEDUSA_BACKEND_URL=https://....trycloudflare.com
-```
-
-In `apps/medusa/.env`:
-
-```env
-STORE_CORS=https://your-project.vercel.app,http://localhost:3000
-AUTH_CORS=https://your-project.vercel.app,http://localhost:3000
-```
-
-Restart Medusa. Tunnel URL changes each run — testing only.
-
-### Option C — Wait for free VM (Phase 5)
-
-Deploy Medusa on Oracle/GCP/Fly later; set stable API URL in Vercel. See [DEPLOY.md](./DEPLOY.md).
+Open http://localhost:3000/admin → create the first admin user → add products and variants (`pricePaise` = **GST-inclusive** paise).
 
 ---
 
-## Step 6 — Verify after deploy
+## Step 3 — Deploy on Vercel
 
-| Check | How |
-|-------|-----|
-| Build | Vercel deployment green |
-| Images | Product images load (ImageKit + Medusa if tunneled) |
-| Newsletter | Footer signup → row in Neon `galle` DB |
-| Email | Test checkout with your email (Resend) |
-| Razorpay | Checkout → Pay (test mode) |
-| Admin | Still `http://localhost:9000/app` on your PC |
+### 3a. Import project
 
-```powershell
-pnpm --filter @galle/storefront check:env
-```
+1. [vercel.com/new](https://vercel.com/new) → Import your GitHub repo.
+2. **Root Directory:** `apps/storefront`
+3. Framework: Next.js (monorepo install from repo root via `vercel.json`).
 
-(Run locally; compare vars to Vercel dashboard.)
+### 3b. Environment variables
 
----
+Use the **pooled** Neon URL. Required:
 
-## Step 7 — Custom domain (optional)
+| Variable | Notes |
+|----------|--------|
+| `DATABASE_URL` | Neon `storefront` pooled URL |
+| `PAYLOAD_SECRET` | Same as local (new random for prod) |
+| `NEXT_PUBLIC_SITE_URL` | `https://your-project.vercel.app` |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Test for preview; live for production |
+| `RAZORPAY_KEY_ID` | Server |
+| `RAZORPAY_KEY_SECRET` | Server |
+| `RESEND_API_KEY` | Resend |
+| `REVALIDATE_SECRET` | Webhook / manual revalidation |
+| ImageKit vars | As in `.env.example` |
 
-1. Vercel → Project → Domains → add `www.galle.com` (or your domain).
-2. Update DNS at registrar per Vercel instructions.
-3. Set `NEXT_PUBLIC_SITE_URL=https://www.galle.com`.
-4. Add domain to Medusa `STORE_CORS` / `AUTH_CORS` when Medusa is hosted.
+**Remove** any legacy Medusa variables (`MEDUSA_BACKEND_URL`, `NEXT_PUBLIC_MEDUSA_*`).
 
----
+### 3c. Deploy
 
-## What stays local until later
+Push to `main`/`master` or click Deploy. After deploy:
 
-| Item | Where |
-|------|--------|
-| Medusa API + Admin | Your PC (`:9000`) |
-| Product catalog edits | Medusa Admin |
-| Razorpay webhook (full flow) | Needs public Medusa URL (VM later) |
+1. Visit `https://<your-app>/admin` and sign in.
+2. Seed catalog (products + variants with GST-inclusive `pricePaise`).
+3. Test checkout with Razorpay test mode.
 
 ---
 
-## Quick checklist
+## Pricing reminder
+
+- Store **₹6,500** as `pricePaise: 650000` (inclusive of 18% GST).
+- Checkout uses that as the payable total; server actions split base/GST for receipts only.
+
+---
+
+## Checklist
 
 - [ ] `pnpm --filter @galle/storefront build` passes
-- [ ] Repo on GitHub
-- [ ] Neon `medusa` + `galle`, migrate + drizzle push
-- [ ] Upstash in Medusa `.env` (optional)
-- [ ] Vercel project root = `apps/storefront`, env vars set
-- [ ] Deploy green; site URL updated
-- [ ] Tunnel or accept shop offline until VM
+- [ ] Neon `storefront` DB + Drizzle schema
+- [ ] Vercel env (pooled `DATABASE_URL`, `PAYLOAD_SECRET`, Razorpay, Resend)
+- [ ] `/admin` user + catalog in Payload
+- [ ] Test order end-to-end
 
-**Next:** [LAUNCH-LOCAL-FIRST.md](./LAUNCH-LOCAL-FIRST.md) Phase 5 — Medusa on a $0 VM (not DigitalOcean).
+See [PAYLOAD-MIGRATION.md](./PAYLOAD-MIGRATION.md) for the full Medusa → Payload migration checklist.

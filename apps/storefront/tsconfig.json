@@ -2,7 +2,10 @@
   "extends": "../../packages/config/tsconfig.base.json",
   "compilerOptions": {
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"],
+      "@payload-config": ["./payload.config.ts"]
+    },
     "jsx": "preserve",
     "incremental": true,
     "noEmit": true

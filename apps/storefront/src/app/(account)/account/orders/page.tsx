@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { PageShell } from "@/components/layout/page-shell";
 import { Headline, BodyText, Eyebrow } from "@/components/typography/display";
-import { getCustomer } from "@/features/auth/server/session";
+import { getSessionCustomer } from "@/features/auth/server/session";
 import { getCustomerOrders } from "@/features/account/server/actions";
 import { formatINR } from "@/lib/money";
 
 export default async function OrdersPage() {
   const [customer, ordersResult] = await Promise.all([
-    getCustomer(),
+    getSessionCustomer(),
     getCustomerOrders(),
   ]);
 

@@ -2,9 +2,9 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: medusa
-      POSTGRES_PASSWORD: medusa
-      POSTGRES_DB: medusa
+      POSTGRES_USER: galle
+      POSTGRES_PASSWORD: galle
+      POSTGRES_DB: storefront
     ports:
       - "5432:5432"
     volumes:

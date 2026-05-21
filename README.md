@@ -1,35 +1,33 @@
 # GALLE Monorepo
 
-Premium perfume storefront (Next.js 15) + Medusa v2 commerce backend.
+Premium perfume storefront (Next.js + Payload CMS v3) on a single Neon database with Drizzle for newsletter and other app tables.
 
-## Quick start (local — Medusa on your PC)
+## Quick start (local)
 
 ```bash
 pnpm install
-docker compose up -d
-pnpm --filter @galle/medusa db:migrate
-pnpm --filter @galle/medusa seed
+cp apps/storefront/.env.example apps/storefront/.env.local
+# Set DATABASE_URL to Neon database `storefront` (pooled URL for Vercel)
 
-# Terminal 1: Medusa API + Admin
-pnpm --filter @galle/medusa dev
-
-# Terminal 2: Storefront
 pnpm --filter @galle/storefront dev
 ```
 
 - Storefront: http://localhost:3000  
-- Medusa Admin: http://localhost:9000/app  
+- Payload Admin: http://localhost:3000/admin (create your first user on first visit)
 
-**Host storefront now (Medusa stays local):** [HOST-NOW.md](./HOST-NOW.md)  
-**Launch without hosting Medusa yet:** [LAUNCH-LOCAL-FIRST.md](./LAUNCH-LOCAL-FIRST.md)  
-**Full production / $0 VM later:** [DEPLOY.md](./DEPLOY.md)
+**Deploy storefront:** [HOST-NOW.md](./HOST-NOW.md)  
+**Payload migration notes:** [PAYLOAD-MIGRATION.md](./PAYLOAD-MIGRATION.md)  
+**Architecture:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 
 ## Apps
 
 | App | Description |
 |-----|-------------|
-| `apps/storefront` | Next.js 15 — Ethereal Essence design system |
-| `apps/medusa` | Medusa v2 + fragrance module |
+| `apps/storefront` | Next.js + Payload CMS — catalog, cart (cookie), checkout, admin |
+
+## Pricing (GST-inclusive)
+
+Variant `pricePaise` in Payload is the **final amount the customer pays** (e.g. ₹6,500 → `650000`). Checkout splits base + 18% GST backwards for Razorpay receipts and invoices.
 
 ## Product images
 
@@ -37,8 +35,8 @@ Seed images live in `apps/storefront/public/` (`1.png`–`5.png`).
 
 ## Docs
 
-- [HOST-NOW.md](./HOST-NOW.md) — Vercel + Neon + Upstash step-by-step (no DigitalOcean)
-- [LAUNCH-LOCAL-FIRST.md](./LAUNCH-LOCAL-FIRST.md) — Neon, Upstash, Vercel, keys; Medusa stays local
-- [DEPLOY.md](./DEPLOY.md) — production & $0 VM when ready
+- [HOST-NOW.md](./HOST-NOW.md) — Vercel + Neon step-by-step
+- [PAYLOAD-MIGRATION.md](./PAYLOAD-MIGRATION.md) — Medusa → Payload checklist
+- [DEPLOY.md](./DEPLOY.md) — production notes
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [DESIGN.md](./DESIGN.md)
