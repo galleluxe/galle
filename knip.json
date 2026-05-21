@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "apps/storefront": {
+      "entry": ["src/app/**/*.{ts,tsx}", "src/middleware.ts"],
+      "project": ["src/**/*.{ts,tsx}"]
+    }
+  },
+  "ignore": ["**/.next/**", "**/node_modules/**"]
+}

@@ -1,0 +1,23 @@
+{
+  "nav": {
+    "boutique": "Boutique",
+    "gallery": "Gallery",
+    "atelier": "Atelier",
+    "gifting": "Gifting",
+    "journal": "Journal",
+    "account": "Account",
+    "cart": "Bag"
+  },
+  "home": {
+    "heroTitle": "Ethereal Essence",
+    "heroSubtitle": "Weightless sophistication and olfactory grace.",
+    "exploreBoutique": "Explore Boutique",
+    "scentDiscovery": "Scent Discovery"
+  },
+  "common": {
+    "addToBag": "Add to Bag",
+    "buyNow": "Buy Now",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  }
+}

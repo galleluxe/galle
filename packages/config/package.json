@@ -1,0 +1,9 @@
+{
+  "name": "@galle/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./tailwind": "./tailwind-preset.ts",
+    "./typescript": "./tsconfig.base.json"
+  }
+}

@@ -1,0 +1,72 @@
+:root {
+  --color-surface: #faf9f5;
+  --color-surface-dim: #dbdad6;
+  --color-surface-bright: #faf9f5;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f4f0;
+  --color-surface-container: #efeeea;
+  --color-surface-container-high: #e9e8e4;
+  --color-surface-container-highest: #e3e2df;
+  --color-on-surface: #1b1c1a;
+  --color-on-surface-variant: #4f4444;
+  --color-inverse-surface: #2f312e;
+  --color-inverse-on-surface: #f2f1ed;
+  --color-outline: #817474;
+  --color-outline-variant: #d2c3c3;
+  --color-surface-tint: #6f5959;
+  --color-primary: #6f5959;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #f2d5d5;
+  --color-on-primary-container: #715b5b;
+  --color-inverse-primary: #dcc0c0;
+  --color-secondary: #735c00;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fed65b;
+  --color-on-secondary-container: #745c00;
+  --color-tertiary: #805253;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ffd1d1;
+  --color-on-tertiary-container: #835455;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #f9dcdc;
+  --color-primary-fixed-dim: #dcc0c0;
+  --color-on-primary-fixed: #271718;
+  --color-on-primary-fixed-variant: #564242;
+  --color-secondary-fixed: #ffe088;
+  --color-secondary-fixed-dim: #e9c349;
+  --color-on-secondary-fixed: #241a00;
+  --color-on-secondary-fixed-variant: #574500;
+  --color-tertiary-fixed: #ffdad9;
+  --color-tertiary-fixed-dim: #f3b8b8;
+  --color-on-tertiary-fixed: #321113;
+  --color-on-tertiary-fixed-variant: #653b3c;
+  --color-background: #faf9f5;
+  --color-on-background: #1b1c1a;
+  --color-surface-variant: #e3e2df;
+  --color-chip-border: #e8d5c4;
+
+  --radius-sm: 0.125rem;
+  --radius-default: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  --space-unit: 8px;
+  --space-container-max: 1200px;
+  --space-gutter: 24px;
+  --space-margin-desktop: 80px;
+  --space-margin-mobile: 20px;
+  --space-section-gap: 120px;
+
+  --motion-quick: 180ms;
+  --motion-base: 320ms;
+  --motion-slow: 560ms;
+  --ease-luxury: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --shadow-ambient: 0 20px 40px rgba(111, 89, 89, 0.06);
+  --shadow-header: 0 10px 30px rgba(111, 89, 89, 0.05);
+}

@@ -1,0 +1,9 @@
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      glob: "apps/storefront/src/**/*.{ts,tsx}"
+      run: pnpm --filter @galle/storefront exec tsc --noEmit
+    lint:
+      glob: "apps/storefront/src/**/*.{ts,tsx}"
+      run: pnpm --filter @galle/storefront lint

@@ -1,0 +1,64 @@
+"use client";
+
+import Image from "next/image";
+import { useActionState } from "react";
+import { createGiftOrder } from "@/features/gifting/server/actions";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { formatINR } from "@/lib/money";
+import type { Product } from "@/lib/catalog/types";
+
+interface GiftingFormProps {
+  products: Product[];
+}
+
+const initialState = null;
+
+export function GiftingForm({ products }: GiftingFormProps) {
+  const [state, formAction, pending] = useActionState(createGiftOrder, initialState);
+
+  return (
+    <form action={formAction} className="space-y-10">
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <Input label="Your name" name="senderName" required />
+        <Input label="Your email" name="senderEmail" type="email" required />
+        <Input label="Recipient name" name="recipientName" required />
+        <Input label="Recipient phone" name="recipientPhone" type="tel" required />
+        <Input label="Gift message (optional)" name="message" className="sm:col-span-2" />
+      </section>
+
+      <section>
+        <h2 className="font-headline-sm text-headline-sm text-primary mb-6">
+          Select a fragrance
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+          {products.map((p) => (
+            <label
+              key={p.id}
+              className="flex flex-col items-center p-4 border border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary-container/20"
+            >
+              <input type="radio" name="product" value={p.handle} className="sr-only" />
+              <div className="relative w-20 h-28 mb-3">
+                <Image src={p.thumbnail} alt={p.title} fill className="object-cover rounded" sizes="80px" />
+              </div>
+              <p className="font-headline-sm text-headline-sm text-primary text-center">{p.title}</p>
+              {p.variants[0] && (
+                <p className="font-body-md text-body-md text-on-surface-variant">
+                  {formatINR(p.variants[0].pricePaise)}
+                </p>
+              )}
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {state && !state.success && (
+        <p className="text-error text-sm text-center">{state.error}</p>
+      )}
+
+      <Button type="submit" variant="primary" className="w-full" disabled={pending}>
+        {pending ? "Adding to bag…" : "Continue to Checkout"}
+      </Button>
+    </form>
+  );
+}
