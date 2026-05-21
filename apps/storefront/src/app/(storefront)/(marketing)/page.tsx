@@ -2,11 +2,13 @@ import Link from "next/link";
 import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
 import { BodyText, Headline } from "@/components/typography/display";
-import { HomeReviewsSection } from "@/components/reviews/product-reviews";
-import { getCart } from "@/features/cart/server/store";
 import { HeroCarousel } from "@/features/home/components/hero-carousel";
 import { ProductCarouselRow } from "@/features/home/components/product-carousel-row";
+import { ProductCard } from "@/features/catalog/components/product-card";
+import { ProductGrid } from "@/features/catalog/components/product-grid";
+import { getCart } from "@/features/cart/server/store";
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
+import { HomeReviewsSection } from "@/components/reviews/product-reviews";
 import { listProducts } from "@/lib/catalog";
 import { getAllPosts } from "@/lib/journal";
 
@@ -18,23 +20,23 @@ export default async function HomePage() {
   const [products, cart] = await Promise.all([listProducts(), getCart()]);
   const journalPosts = getAllPosts().slice(0, 2);
   const collection = products.slice(0, 5);
-  const featuredFlagged = products.filter((p) => p.featured);
-  const featured =
-    featuredFlagged.length > 0 ? featuredFlagged : products.slice(0, 4);
+  const featured = products.slice(0, 2);
 
   return (
     <>
-      <section className="mb-section-gap">
-        <HeroCarousel products={products} />
+      <section className="mb-8 md:mb-section-gap">
+        <PageShell>
+          <HeroCarousel products={products} />
+        </PageShell>
       </section>
 
-      <section className="mb-section-gap border-y border-outline-variant/30 py-16">
+      <section className="mb-12 md:mb-section-gap border-y border-outline-variant/30 py-10 md:py-16">
         <PageShell>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             {[
               { icon: "eco", title: "Sustainable", desc: "Ethically sourced botanicals" },
               { icon: "verified", title: "Authentic", desc: "Crafted in small batches" },
-              { icon: "local_shipping", title: "India-wide", desc: "Pan-India delivery" },
+              { icon: "local_shipping", title: "India-wide", desc: "Shiprocket delivery" },
             ].map((item) => (
               <div key={item.title}>
                 <span className="material-symbols-outlined text-3xl text-secondary mb-4 block">
@@ -50,11 +52,11 @@ export default async function HomePage() {
         </PageShell>
       </section>
       
-      <section className="mb-section-gap">
+      <section className="mb-12 md:mb-section-gap">
         <PageShell>
-          <div className="text-center mb-8 md:mb-12">
+          <div className="text-center mb-12">
             <Headline size="sm">Featured</Headline>
-            <BodyText className="mt-3 md:mt-4 max-w-xl mx-auto">
+            <BodyText className="mt-4 max-w-xl mx-auto">
               Curated signatures from the maison.
             </BodyText>
           </div>
@@ -62,7 +64,7 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
-      <section className="mb-section-gap">
+      <section className="mb-12 md:mb-section-gap">
         <PageShell>
           <div className="text-center mb-12">
             <Headline size="sm">The Collection</Headline>
@@ -76,7 +78,7 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
-      <section className="mb-section-gap">
+      <section className="mb-12 md:mb-section-gap">
         <PageShell>
           <div className="text-center mb-12">
             <Headline>Scent Discovery</Headline>
@@ -109,7 +111,7 @@ export default async function HomePage() {
 
 
 
-      <section className="mb-section-gap">
+      <section className="mb-12 md:mb-section-gap">
         <PageShell>
           <div className="text-center mb-12">
             <Headline>From the Journal</Headline>
@@ -146,13 +148,13 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
-      <section className="mb-section-gap">
+      <section className="mb-12 md:mb-section-gap">
         <PageShell>
           <HomeReviewsSection />
         </PageShell>
       </section>
 
-      <section className="mb-section-gap bg-primary-container/10 py-16">
+      <section className="mb-12 md:mb-section-gap bg-primary-container/10 py-12 md:py-16">
         <PageShell narrow className="text-center">
           <Headline className="mb-4">Stay in the Atelier</Headline>
           <BodyText className="mb-8">

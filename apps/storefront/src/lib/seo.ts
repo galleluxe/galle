@@ -4,10 +4,6 @@ import { formatINR } from "./money";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://galle.com";
 
-export function getSiteUrl(): string {
-  return BASE_URL.replace(/\/$/, "");
-}
-
 export function buildProductMetadata(product: Product): Metadata {
   const variant = product.variants[0];
   const price = variant ? formatINR(variant.pricePaise) : undefined;

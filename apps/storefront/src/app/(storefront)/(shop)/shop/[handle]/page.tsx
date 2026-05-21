@@ -14,12 +14,7 @@ import { getCart } from "@/features/cart/server/store";
 import { getProduct, listProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
 import { ProductReviews } from "@/components/reviews/product-reviews";
-import {
-  buildProductMetadata,
-  buildProductJsonLd,
-  buildBreadcrumbJsonLd,
-  getSiteUrl,
-} from "@/lib/seo";
+import { buildProductMetadata, buildProductJsonLd, buildBreadcrumbJsonLd } from "@/lib/seo";
 
 interface PDPProps {
   params: Promise<{ handle: string }>;
@@ -48,15 +43,14 @@ export default async function ProductPage({ params }: PDPProps) {
   const related = allProducts.filter((p) => p.handle !== handle).slice(0, 3);
   const fragrance = product.fragrance;
   const productJsonLd = buildProductJsonLd(product);
-  const siteUrl = getSiteUrl();
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "Home", url: siteUrl },
-    { name: "Boutique", url: `${siteUrl}/shop` },
-    { name: product.title, url: `${siteUrl}/shop/${product.handle}` },
+    { name: "Home", url: "https://galle.com" },
+    { name: "Boutique", url: "https://galle.com/shop" },
+    { name: product.title, url: `https://galle.com/shop/${product.handle}` },
   ]);
 
   return (
-    <PageShell className="pt-2 md:pt-8 pb-section-gap">
+    <PageShell className="pt-8 pb-section-gap">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}

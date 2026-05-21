@@ -14,11 +14,11 @@ export default function CheckoutSuccessPage() {
         Your order has been received. A confirmation email will be sent shortly.
       </BodyText>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button asChild variant="primary">
-          <Link href="/account/orders">View Orders</Link>
+        <Button asChild variant="primary" className="min-w-[200px]">
+          <Link href="/shop">Continue Shopping</Link>
         </Button>
         <Button asChild variant="ghost">
-          <Link href="/shop">Continue Shopping</Link>
+          <Link href="/">Return Home</Link>
         </Button>
       </div>
     </PageShell>

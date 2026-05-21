@@ -1,64 +1,50 @@
 import Link from "next/link";
 import { PageShell } from "@/components/layout/page-shell";
-import { GuestCheckoutNotice } from "@/components/auth/guest-checkout-notice";
 import { Display, BodyText, Headline } from "@/components/typography/display";
-
-const LINKS = [
-  { href: "/shop", label: "Shop", icon: "storefront", enabled: true },
-  { href: "/account/orders", label: "Orders", icon: "package_2", enabled: false },
-  { href: "/account/addresses", label: "Addresses", icon: "location_on", enabled: false },
-  { href: "/account/profile", label: "Profile", icon: "person", enabled: false },
-  { href: "/track", label: "Track Order", icon: "local_shipping", enabled: false },
-] as const;
+import { Button } from "@/components/ui/button";
 
 export default function AccountPage() {
   return (
-    <PageShell className="pt-4 md:pt-8 pb-section-gap max-w-lg mx-auto">
-      <section className="text-center mb-8">
-        <Display className="text-display-md-mobile md:text-display-lg mb-3">
-          Profile
+    <PageShell className="pt-4 md:pt-8 pb-12 md:pb-section-gap max-w-md mx-auto text-center space-y-10">
+      <section className="space-y-4">
+        <Display className="text-display-lg-mobile md:text-display-lg">
+          My Atelier
         </Display>
-        <BodyText>Manage your GALLE experience.</BodyText>
+        <BodyText className="max-w-sm mx-auto text-on-surface-variant/90">
+          GALLE uses premium Guest Checkout to ensure a seamless, friction-free purchasing experience.
+        </BodyText>
       </section>
 
-      <GuestCheckoutNotice className="mb-8" />
+      <div className="bg-surface-container-low border border-outline-variant/30 rounded-3xl p-8 space-y-6 text-center ambient-shadow">
+        <span className="material-symbols-outlined text-4xl text-secondary block mx-auto">
+          local_shipping
+        </span>
+        <div className="space-y-2">
+          <Headline size="sm" className="text-primary">Order Tracking</Headline>
+          <BodyText className="text-sm text-on-surface-variant">
+            Review delivery status, shipping updates, and purchase invoices for your guest orders.
+          </BodyText>
+        </div>
+        <Button asChild variant="primary" className="w-full">
+          <Link href="/track">Track Guest Order</Link>
+        </Button>
+      </div>
 
-      <nav className="space-y-2" aria-label="Account">
-        {LINKS.map((link) =>
-          link.enabled ? (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center gap-4 p-5 md:p-6 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors group"
-            >
-              <span className="material-symbols-outlined text-primary text-2xl">
-                {link.icon}
-              </span>
-              <Headline size="sm" className="flex-1 text-on-surface group-hover:text-primary transition-colors">
-                {link.label}
-              </Headline>
-              <span className="material-symbols-outlined text-outline">chevron_right</span>
-            </Link>
-          ) : (
-            <div
-              key={link.href}
-              className="flex items-center gap-4 p-5 md:p-6 bg-surface-container-low/60 rounded-xl opacity-60 cursor-not-allowed"
-              aria-disabled="true"
-              title="Available when customer accounts launch"
-            >
-              <span className="material-symbols-outlined text-outline text-2xl">
-                {link.icon}
-              </span>
-              <Headline size="sm" className="flex-1 text-on-surface-variant">
-                {link.label}
-              </Headline>
-              <span className="font-label-caps text-[9px] uppercase tracking-widest text-outline">
-                Soon
-              </span>
-            </div>
-          ),
-        )}
-      </nav>
+      <div className="border border-outline-variant/20 rounded-2xl p-6 text-left space-y-3 bg-surface/50">
+        <div className="flex items-center gap-2 text-primary">
+          <span className="material-symbols-outlined text-xl">info</span>
+          <p className="font-label-caps text-xs uppercase tracking-widest font-semibold">Atelier Accounts</p>
+        </div>
+        <BodyText className="text-xs text-on-surface-variant/80">
+          Registered customer accounts with olfactory wishlists, fragrance subscriptions, and member-exclusive early-access collections are currently under active curation. Stay tuned.
+        </BodyText>
+      </div>
+
+      <div className="pt-4">
+        <Button asChild variant="ghost" className="text-xs">
+          <Link href="/shop">Explore the Boutique</Link>
+        </Button>
+      </div>
     </PageShell>
   );
 }
