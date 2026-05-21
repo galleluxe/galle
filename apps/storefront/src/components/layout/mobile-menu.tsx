@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "Atelier" },
   { href: "/account", label: "Account" },
+  { href: "/sign-in", label: "Sign In" },
   { href: "/gifting", label: "Gifting" },
 ] as const;
 

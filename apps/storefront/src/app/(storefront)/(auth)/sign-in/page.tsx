@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signInAction } from "@/features/auth/server/actions";
+import { GuestCheckoutNotice } from "@/components/auth/guest-checkout-notice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Display, BodyText, Eyebrow } from "@/components/typography/display";
@@ -45,9 +46,11 @@ export default function SignInPage() {
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <Eyebrow className="text-center mb-4">Welcome back</Eyebrow>
-        <Display className="text-display-md-mobile text-center mb-10">
+        <Display className="text-display-md-mobile text-center mb-6">
           Sign In
         </Display>
+
+        <GuestCheckoutNotice className="mb-8" />
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <div>

@@ -14,7 +14,7 @@ const PAGES: Record<string, { title: string; sections: string[] }> = {
   shipping: {
     title: "Shipping",
     sections: [
-      "Orders ship within 2–4 business days across India via Shiprocket.",
+      "Orders ship within 2–4 business days across India.",
       "Express delivery is available in metro cities at checkout.",
       "International shipping is not available at launch.",
     ],

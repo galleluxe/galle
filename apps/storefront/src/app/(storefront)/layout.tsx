@@ -45,7 +45,7 @@ export default async function StorefrontLayout({
         <Providers>
           <Navbar pathname={pathname} />
           <CartDrawer />
-          <main className="flex-grow pt-24 pb-12">{children}</main>
+          <main className="flex-grow pt-20 md:pt-24 pb-12">{children}</main>
           <Footer />
           <MobileTabBar />
           <Toaster />

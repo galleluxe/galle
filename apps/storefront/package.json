@@ -7,6 +7,7 @@
     "dev": "next dev --port 3000",
     "check:env": "node scripts/check-env.mjs",
     "payload": "payload",
+    "seed:catalog": "payload run scripts/seed-catalog.ts",
     "generate:types": "payload generate:types",
     "build": "next build",
     "start": "next start",

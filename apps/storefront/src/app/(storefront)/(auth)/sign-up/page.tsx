@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signUpAction } from "@/features/auth/server/actions";
+import { GuestCheckoutNotice } from "@/components/auth/guest-checkout-notice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Display, BodyText, Eyebrow } from "@/components/typography/display";
@@ -55,9 +56,7 @@ export default function SignUpPage() {
         <Display className="text-display-md-mobile text-center mb-4">
           Create Account
         </Display>
-        <BodyText className="text-center mb-8 text-on-surface-variant">
-          Email and password only — add your name later in account settings.
-        </BodyText>
+        <GuestCheckoutNotice className="mb-8" />
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <div>

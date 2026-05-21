@@ -2,13 +2,11 @@ import Link from "next/link";
 import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
 import { BodyText, Headline } from "@/components/typography/display";
+import { HomeReviewsSection } from "@/components/reviews/product-reviews";
+import { getCart } from "@/features/cart/server/store";
 import { HeroCarousel } from "@/features/home/components/hero-carousel";
 import { ProductCarouselRow } from "@/features/home/components/product-carousel-row";
-import { ProductCard } from "@/features/catalog/components/product-card";
-import { ProductGrid } from "@/features/catalog/components/product-grid";
-import { getCart } from "@/features/cart/server/store";
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
-import { HomeReviewsSection } from "@/components/reviews/product-reviews";
 import { listProducts } from "@/lib/catalog";
 import { getAllPosts } from "@/lib/journal";
 
@@ -20,14 +18,14 @@ export default async function HomePage() {
   const [products, cart] = await Promise.all([listProducts(), getCart()]);
   const journalPosts = getAllPosts().slice(0, 2);
   const collection = products.slice(0, 5);
-  const featured = products.slice(0, 2);
+  const featuredFlagged = products.filter((p) => p.featured);
+  const featured =
+    featuredFlagged.length > 0 ? featuredFlagged : products.slice(0, 4);
 
   return (
     <>
       <section className="mb-section-gap">
-        <PageShell>
-          <HeroCarousel products={products} />
-        </PageShell>
+        <HeroCarousel products={products} />
       </section>
 
       <section className="mb-section-gap border-y border-outline-variant/30 py-16">
@@ -36,7 +34,7 @@ export default async function HomePage() {
             {[
               { icon: "eco", title: "Sustainable", desc: "Ethically sourced botanicals" },
               { icon: "verified", title: "Authentic", desc: "Crafted in small batches" },
-              { icon: "local_shipping", title: "India-wide", desc: "Shiprocket delivery" },
+              { icon: "local_shipping", title: "India-wide", desc: "Pan-India delivery" },
             ].map((item) => (
               <div key={item.title}>
                 <span className="material-symbols-outlined text-3xl text-secondary mb-4 block">
@@ -54,17 +52,13 @@ export default async function HomePage() {
       
       <section className="mb-section-gap">
         <PageShell>
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <Headline size="sm">Featured</Headline>
-            <BodyText className="mt-4 max-w-xl mx-auto">
+            <BodyText className="mt-3 md:mt-4 max-w-xl mx-auto">
               Curated signatures from the maison.
             </BodyText>
           </div>
-          <ProductGrid className="lg:grid-cols-2 max-w-4xl mx-auto">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} cart={cart} />
-            ))}
-          </ProductGrid>
+          <ProductCarouselRow products={featured} cart={cart} />
         </PageShell>
       </section>
 
