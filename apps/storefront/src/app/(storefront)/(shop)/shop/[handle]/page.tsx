@@ -29,6 +29,13 @@ export async function generateMetadata({ params }: PDPProps): Promise<Metadata> 
 
 export const revalidate = 600;
 
+export async function generateStaticParams() {
+  const products = await listProducts();
+  return products.map((product) => ({
+    handle: product.handle,
+  }));
+}
+
 export default async function ProductPage({ params }: PDPProps) {
   const { handle } = await params;
   const [product, allProducts] = await Promise.all([

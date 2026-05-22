@@ -17,6 +17,19 @@ interface CartDrawerCtx {
 
 const CartDrawerContext = createContext<CartDrawerCtx | null>(null);
 
+function getCartCookieStatus() {
+  if (typeof window === "undefined") return { empty: true };
+  const match = document.cookie.match(/(?:^|; )galle_cart_data=([^;]*)/);
+  if (!match) return { empty: true };
+  try {
+    const decoded = decodeURIComponent(match[1]);
+    const stored = JSON.parse(decoded) as { lines: any[] };
+    return { empty: !stored.lines || stored.lines.length === 0 };
+  } catch {
+    return { empty: true };
+  }
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [cart, setCart] = useState<Cart | null>(null);
@@ -40,7 +53,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshCart();
+    const status = getCartCookieStatus();
+    if (status.empty) {
+      setCart({
+        id: "guest",
+        lines: [],
+        itemCount: 0,
+        subtotalPaise: 0,
+      });
+      setLoading(false);
+    } else {
+      refreshCart();
+    }
   }, [refreshCart]);
 
   const addCartItem = useCallback(async (variantId: string, productHandle: string, quantity: number = 1) => {

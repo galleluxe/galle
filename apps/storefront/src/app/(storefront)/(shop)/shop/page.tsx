@@ -1,22 +1,15 @@
 import Link from "next/link";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { Display, BodyText } from "@/components/typography/display";
-import { FilterBar } from "@/features/catalog/components/filter-bar";
-import { ProductCard } from "@/features/catalog/components/product-card";
-import { ProductGrid } from "@/features/catalog/components/product-grid";
+import { ShopFilterableGrid } from "@/features/catalog/components/shop-filterable-grid";
 import { listProducts } from "@/lib/catalog";
 
 export const revalidate = 600;
 
-interface ShopPageProps {
-  searchParams: Promise<{ family?: string }>;
-}
-
-export default async function ShopPage({ searchParams }: ShopPageProps) {
-  const { family } = await searchParams;
-  const activeFamily = family?.toUpperCase();
-  const products = await listProducts(activeFamily && activeFamily !== "ALL" ? activeFamily : undefined);
+export default async function ShopPage() {
+  const products = await listProducts();
 
   return (
     <NuqsAdapter>
@@ -30,23 +23,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           </BodyText>
         </section>
 
-        <section className="mb-16 animate-fade-in-up [animation-delay:200ms]">
-          <FilterBar />
-        </section>
-
-        <section className="animate-blur-in [animation-delay:400ms]">
-          {products.length === 0 ? (
-            <p className="text-center font-body-lg text-on-surface-variant py-24">
-              No fragrances in this collection yet.
-            </p>
-          ) : (
-            <ProductGrid>
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </ProductGrid>
-          )}
-        </section>
+        <Suspense fallback={
+          <div className="flex items-center justify-center py-20">
+            <span className="material-symbols-outlined text-3xl text-primary animate-spin">
+              progress_activity
+            </span>
+          </div>
+        }>
+          <ShopFilterableGrid products={products} />
+        </Suspense>
 
         <section className="mt-16 md:mt-section-gap text-center">
           <BodyText className="mb-4">Looking for the perfect gift?</BodyText>
