@@ -60,7 +60,7 @@ export default async function HomePage() {
               Curated signatures from the maison.
             </BodyText>
           </div>
-          <ProductCarouselRow products={featured} cart={cart} />
+          <ProductCarouselRow products={featured} cart={cart} centerOnDesktop />
         </PageShell>
       </section>
 

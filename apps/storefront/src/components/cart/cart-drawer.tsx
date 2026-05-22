@@ -202,7 +202,7 @@ export function CartDrawer() {
               <Dialog.Close asChild>
                 <Link
                   href="/checkout"
-                  className="w-full rounded-sm bg-primary py-4 font-label-caps text-[11px] tracking-[0.12em] text-on-primary uppercase flex items-center justify-center hover:bg-primary/90 transition-colors"
+                  className="w-full rounded-none bg-primary py-4 font-label-caps text-[11px] tracking-[0.12em] text-on-primary uppercase flex items-center justify-center hover:bg-primary/90 transition-colors"
                 >
                   Checkout
                 </Link>

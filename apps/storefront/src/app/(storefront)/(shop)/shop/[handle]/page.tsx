@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: PDPProps) {
                 />
                 <Link
                   href="/checkout"
-                  className="inline-flex items-center justify-center border border-secondary-fixed-dim text-primary px-8 py-3 font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container transition-colors rounded-full"
+                  className="inline-flex items-center justify-center border border-secondary-fixed-dim text-primary px-8 py-3 font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container transition-colors rounded-none"
                 >
                   Buy Now
                 </Link>

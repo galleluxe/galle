@@ -135,7 +135,7 @@ export function SearchButton() {
                   <button
                     key={term}
                     onClick={() => setQuery(term)}
-                    className="px-4 py-2 rounded-full border border-outline-variant/30 text-xs font-label-caps uppercase tracking-widest text-primary hover:bg-surface-container-low transition-colors"
+                    className="px-4 py-2 rounded-none border border-outline-variant/30 text-xs font-label-caps uppercase tracking-widest text-primary hover:bg-surface-container-low transition-colors"
                   >
                     {term}
                   </button>

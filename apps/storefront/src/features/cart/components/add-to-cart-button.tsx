@@ -47,7 +47,7 @@ export function AddToCartButton({
           })
         }
         className={cn(
-          "w-full rounded-sm bg-primary py-3.5 font-label-caps text-[11px] tracking-[0.12em] text-on-primary uppercase transition-colors hover:bg-primary/90 disabled:opacity-50",
+          "w-full rounded-none bg-primary py-3.5 font-label-caps text-[11px] tracking-[0.12em] text-on-primary uppercase transition-colors hover:bg-primary/90 disabled:opacity-50",
           className,
         )}
       >
