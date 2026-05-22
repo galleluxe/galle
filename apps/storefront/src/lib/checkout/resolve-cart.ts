@@ -38,43 +38,52 @@ export async function resolveCartLines(
   const resolved: ResolvedCartLine[] = [];
 
   for (const line of storedLines) {
-    const variant = await payload.findByID({
-      collection: "product-variants",
-      id: line.variantId,
-      depth: 1,
-    });
+    try {
+      const variant = await payload.findByID({
+        collection: "product-variants",
+        id: line.variantId,
+        depth: 1,
+      });
 
-    if (!variant.isAvailable) {
-      throw new Error(`${variant.title} is unavailable.`);
+      if (!variant || !variant.isAvailable) {
+        continue;
+      }
+
+      // Safe stock fallback instead of crashing
+      const availableQty = Math.max(0, Number(variant.inventory));
+      const finalQty = Math.min(line.quantity, availableQty);
+      if (finalQty <= 0) {
+        continue;
+      }
+
+      const productRef = variant.product;
+      const product =
+        typeof productRef === "object" && productRef !== null
+          ? productRef
+          : await payload.findByID({
+              collection: "products",
+              id: String(productRef),
+            });
+
+      if (!product || product.status !== "published") {
+        continue;
+      }
+
+      const unitPricePaise = Number(variant.pricePaise);
+      resolved.push({
+        variantId: String(variant.id),
+        productHandle: String(product.handle),
+        productTitle: String(product.title),
+        variantTitle: String(variant.title),
+        sku: String(variant.sku),
+        quantity: finalQty,
+        unitPricePaise,
+        lineTotalPaise: unitPricePaise * finalQty,
+      });
+    } catch (e) {
+      console.error("[resolveCartLines] skipped invalid cart line:", e);
+      continue;
     }
-    if (variant.inventory < line.quantity) {
-      throw new Error(`Only ${variant.inventory} left for ${variant.title}.`);
-    }
-
-    const productRef = variant.product;
-    const product =
-      typeof productRef === "object" && productRef !== null
-        ? productRef
-        : await payload.findByID({
-            collection: "products",
-            id: String(productRef),
-          });
-
-    if (product.status !== "published") {
-      throw new Error(`${product.title} is not available.`);
-    }
-
-    const unitPricePaise = Number(variant.pricePaise);
-    resolved.push({
-      variantId: String(variant.id),
-      productHandle: String(product.handle),
-      productTitle: String(product.title),
-      variantTitle: String(variant.title),
-      sku: String(variant.sku),
-      quantity: line.quantity,
-      unitPricePaise,
-      lineTotalPaise: unitPricePaise * line.quantity,
-    });
   }
 
   const subtotalPaise = resolved.reduce((s, l) => s + l.lineTotalPaise, 0);

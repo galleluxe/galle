@@ -11,13 +11,13 @@ interface BuyNowButtonProps {
 
 export function BuyNowButton({ variantId, productHandle }: BuyNowButtonProps) {
   const [pending, startTransition] = useTransition();
-  const { addCartItem } = useCartDrawer();
+  const { buyNowItem } = useCartDrawer();
   const router = useRouter();
 
   const handleBuyNow = () => {
     startTransition(async () => {
       try {
-        await addCartItem(variantId, productHandle, 1);
+        await buyNowItem(variantId, productHandle, 1);
         router.push("/checkout");
       } catch (error) {
         console.error("Buy Now error:", error);

@@ -10,6 +10,7 @@ interface CartDrawerCtx {
   cart: Cart | null;
   loading: boolean;
   addCartItem: (variantId: string, productHandle: string, quantity?: number) => Promise<void>;
+  buyNowItem: (variantId: string, productHandle: string, quantity?: number) => Promise<void>;
   updateCartItem: (variantId: string, productHandle: string, quantity: number) => Promise<void>;
   removeCartItem: (variantId: string, productHandle: string) => Promise<void>;
   refreshCart: () => Promise<void>;
@@ -88,6 +89,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const buyNowItem = useCallback(async (variantId: string, productHandle: string, quantity: number = 1) => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "clear-and-add", variantId, productHandle, quantity }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setCart(updated);
+        window.dispatchEvent(new Event("galle-cart-updated"));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const updateCartItem = useCallback(async (variantId: string, productHandle: string, quantity: number) => {
     // Optimistic UI update for instant cart reaction
     setCart((prev) => {
@@ -153,7 +174,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [refreshCart]);
 
   return (
-    <CartDrawerContext.Provider value={{ isOpen, open, close, cart, loading, addCartItem, updateCartItem, removeCartItem, refreshCart }}>
+    <CartDrawerContext.Provider value={{ isOpen, open, close, cart, loading, addCartItem, buyNowItem, updateCartItem, removeCartItem, refreshCart }}>
       {children}
     </CartDrawerContext.Provider>
   );

@@ -16,7 +16,13 @@ export async function POST(req: Request) {
 
     const stored = await getStoredCart();
 
-    if (action === "add") {
+    if (action === "clear-and-add") {
+      const product = await getProduct(productHandle);
+      if (!product?.variants.some((v) => v.id === variantId)) {
+        return NextResponse.json({ error: "Invalid variant" }, { status: 400 });
+      }
+      stored.lines = [{ variantId, productHandle, quantity: quantity || 1 }];
+    } else if (action === "add") {
       const product = await getProduct(productHandle);
       if (!product?.variants.some((v) => v.id === variantId)) {
         return NextResponse.json({ error: "Invalid variant" }, { status: 400 });
