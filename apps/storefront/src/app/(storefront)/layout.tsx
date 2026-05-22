@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { Footer } from "@/components/layout/footer";
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
@@ -18,14 +17,11 @@ export const metadata: Metadata = {
     "Premium perfume house. India-first luxury fragrances crafted with olfactory grace.",
 };
 
-export default async function StorefrontLayout({
+export default function StorefrontLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") ?? "/";
-
   return (
     <html lang="en-IN" className={fontVariables}>
       <head>
@@ -43,7 +39,7 @@ export default async function StorefrontLayout({
       </head>
       <body className={`${outfit.className} min-h-screen flex flex-col`}>
         <Providers>
-          <Navbar pathname={pathname} />
+          <Navbar />
           <CartDrawer />
           <main className="flex-grow pt-20 md:pt-24 pb-12">{children}</main>
           <Footer />

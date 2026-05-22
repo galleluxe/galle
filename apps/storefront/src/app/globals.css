@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply bg-surface text-on-surface antialiased font-body-md;
+    @apply bg-surface text-on-surface antialiased font-body-md font-normal;
   }
 
   ::selection {

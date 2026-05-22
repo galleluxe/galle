@@ -4,17 +4,17 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center font-label-caps text-label-caps uppercase tracking-widest transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center font-label-caps text-label-caps uppercase tracking-widest font-semibold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         primary:
-          "bg-tertiary text-on-tertiary px-8 py-3 rounded-full hover:bg-tertiary/90",
+          "bg-primary text-on-primary px-8 py-3 rounded-full border-2 border-primary shadow-sm hover:bg-primary/90 hover:border-primary/90",
         secondary:
-          "border border-secondary-fixed-dim text-primary px-6 py-3 hover:bg-primary-container",
+          "border-2 border-primary bg-surface text-on-surface px-6 py-3 rounded-full hover:bg-primary-container",
         ghost:
-          "border border-secondary-fixed-dim/50 text-primary px-6 py-3 hover:bg-surface-container",
-        icon: "rounded-full bg-primary text-on-primary w-12 h-12 hover:bg-primary/90",
+          "border-2 border-primary/70 bg-transparent text-on-surface px-6 py-3 rounded-full hover:bg-surface-container hover:border-primary",
+        icon: "rounded-full bg-primary text-on-primary w-12 h-12 border-2 border-primary hover:bg-primary/90",
       },
       size: {
         default: "",

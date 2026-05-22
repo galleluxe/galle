@@ -22,13 +22,14 @@ export function CartLineControls({
         type="button"
         disabled={pending || quantity <= 1}
         onClick={() =>
-          startTransition(() =>
-            updateCartLine({
+          startTransition(async () => {
+            await updateCartLine({
               variantId,
               productHandle,
               quantity: quantity - 1,
-            }),
-          )
+            });
+            window.dispatchEvent(new Event("galle-cart-updated"));
+          })
         }
         className="w-8 h-8 border border-outline-variant rounded-full flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40"
         aria-label="Decrease quantity"
@@ -40,13 +41,14 @@ export function CartLineControls({
         type="button"
         disabled={pending || quantity >= 10}
         onClick={() =>
-          startTransition(() =>
-            updateCartLine({
+          startTransition(async () => {
+            await updateCartLine({
               variantId,
               productHandle,
               quantity: quantity + 1,
-            }),
-          )
+            });
+            window.dispatchEvent(new Event("galle-cart-updated"));
+          })
         }
         className="w-8 h-8 border border-outline-variant rounded-full flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40"
         aria-label="Increase quantity"
@@ -57,7 +59,10 @@ export function CartLineControls({
         type="button"
         disabled={pending}
         onClick={() =>
-          startTransition(() => removeFromCart(variantId, productHandle))
+          startTransition(async () => {
+            await removeFromCart(variantId, productHandle);
+            window.dispatchEvent(new Event("galle-cart-updated"));
+          })
         }
         className="font-label-caps text-[10px] text-outline hover:text-error ml-4 uppercase tracking-widest"
       >

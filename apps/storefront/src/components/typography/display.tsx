@@ -10,7 +10,7 @@ export function Display({ children, as: Tag = "h1", className }: DisplayProps) {
   return (
     <Tag
       className={cn(
-        "font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary text-shadow-light",
+        "font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface",
         className,
       )}
     >
@@ -33,7 +33,7 @@ export function Headline({
       ? "font-headline-sm text-headline-sm"
       : "font-headline-md text-headline-md";
   return (
-    <h2 className={cn(sizeClass, "text-primary", className)}>{children}</h2>
+    <h2 className={cn(sizeClass, "text-on-surface", className)}>{children}</h2>
   );
 }
 
@@ -47,7 +47,7 @@ export function Eyebrow({
   return (
     <p
       className={cn(
-        "font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest",
+        "font-label-caps text-label-caps text-text-muted uppercase tracking-widest font-semibold",
         className,
       )}
     >
@@ -69,8 +69,8 @@ export function BodyText({
     <p
       className={cn(
         size === "lg"
-          ? "font-body-lg text-body-lg text-on-surface-variant"
-          : "font-body-md text-body-md text-on-surface-variant",
+          ? "font-body-lg text-body-lg text-on-surface font-medium"
+          : "font-body-md text-body-md text-on-surface",
         className,
       )}
     >

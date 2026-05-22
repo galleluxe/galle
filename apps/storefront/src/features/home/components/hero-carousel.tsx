@@ -71,7 +71,7 @@ export function HeroCarousel({ products }: HeroCarouselProps) {
       <div className="text-center md:text-left space-y-6 md:space-y-8 order-2 md:order-1">
         <Eyebrow className="text-[10px] md:text-xs">The New Signature</Eyebrow>
         <Display className="text-balance text-[28px] sm:text-[36px] md:text-display-lg leading-tight">Whispers of Grace</Display>
-        <BodyText size="lg" className="max-w-md mx-auto md:mx-0 text-sm md:text-base min-h-[3.5rem] md:min-h-[4.5rem] transition-opacity duration-500 text-on-surface-variant/95">
+        <BodyText size="lg" className="max-w-md mx-auto md:mx-0 text-sm md:text-base min-h-[3.5rem] md:min-h-[4.5rem] transition-opacity duration-500">
           {active.description}
         </BodyText>
         <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">

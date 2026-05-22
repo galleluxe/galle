@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   Dialog,
@@ -17,12 +18,11 @@ const NAV_LINKS = [
   { href: "/gifting", label: "Gifting" },
 ] as const;
 
-interface MobileMenuProps {
-  pathname: string;
-}
+interface MobileMenuProps {}
 
-export function MobileMenu({ pathname }: MobileMenuProps) {
+export function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

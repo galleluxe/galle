@@ -68,7 +68,7 @@ export async function getCart(): Promise<Cart> {
 export async function saveCart(stored: StoredCart): Promise<void> {
   const jar = await cookies();
   jar.set(CART_DATA_COOKIE, JSON.stringify(stored), {
-    httpOnly: true,
+    httpOnly: false,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",

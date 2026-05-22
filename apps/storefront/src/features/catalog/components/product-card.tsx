@@ -56,13 +56,13 @@ export function ProductCard({ product, cart, className }: ProductCardProps) {
 
       <div className="flex flex-col gap-4 p-5 md:p-6">
         <Link href={`/shop/${product.handle}`} className="hover:text-secondary transition-colors">
-          <Headline size="sm" className="text-primary">
+          <Headline size="sm" className="text-on-surface">
             {product.title}
           </Headline>
         </Link>
 
         <div className="flex items-baseline justify-between gap-3">
-          <p className="font-body-md text-body-md text-on-surface-variant line-clamp-2 min-w-0">
+          <p className="font-body-md text-body-md text-text-muted font-medium line-clamp-2 min-w-0">
             {noteLine}
           </p>
           <p className="font-headline-sm text-headline-sm text-on-surface shrink-0 tabular-nums">

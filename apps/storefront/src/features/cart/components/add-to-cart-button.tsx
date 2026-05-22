@@ -41,6 +41,7 @@ export function AddToCartButton({
           startTransition(async () => {
             addOptimistic(1);
             await addToCart({ variantId, productHandle, quantity: 1 });
+            window.dispatchEvent(new Event("galle-cart-updated"));
             toast({ title: "Added to your bag", description: "Your essence awaits checkout." });
             openCart();
           })
@@ -64,6 +65,7 @@ export function AddToCartButton({
         startTransition(async () => {
           addOptimistic(1);
           await addToCart({ variantId, productHandle, quantity: 1 });
+          window.dispatchEvent(new Event("galle-cart-updated"));
           toast({ title: "Added to your bag", description: "Your essence awaits checkout." });
           openCart();
         })

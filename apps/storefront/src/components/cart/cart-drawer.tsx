@@ -38,6 +38,7 @@ export function CartDrawer() {
     router.refresh();
     const data = await fetch("/api/cart").then((r) => r.json());
     setCart(data as Cart);
+    window.dispatchEvent(new Event("galle-cart-updated"));
   }
 
   async function handleRemove(variantId: string, productHandle: string) {
@@ -45,6 +46,7 @@ export function CartDrawer() {
     router.refresh();
     const data = await fetch("/api/cart").then((r) => r.json());
     setCart(data as Cart);
+    window.dispatchEvent(new Event("galle-cart-updated"));
   }
 
   const isEmpty = !cart || cart.lines.length === 0;

@@ -11,7 +11,7 @@ export const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   display: "swap",
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600"],
 });
 
 export const fontVariables = `${bodoni.variable} ${outfit.variable}`;
