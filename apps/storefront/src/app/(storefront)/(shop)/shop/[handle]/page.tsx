@@ -48,8 +48,10 @@ export default async function ProductPage({ params }: PDPProps) {
 
   const variant = product.variants[0];
   const related = allProducts.filter((p) => p.handle !== handle).slice(0, 3);
-  const fragrance = product.fragrance;
   const bundleItems = product.bundledProducts ?? [];
+  const isBundle = bundleItems.length > 0;
+  const fragrance = isBundle ? undefined : product.fragrance;
+  const bundleFragrances = bundleItems.filter((item) => item.fragrance);
   const productJsonLd = buildProductJsonLd(product);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: "https://galle.com" },
@@ -85,12 +87,28 @@ export default async function ProductPage({ params }: PDPProps) {
           />
         </Reveal>
         <div className="flex flex-col justify-center">
-          {fragrance && (
+          {(isBundle
+            ? bundleItems.some((item) => item.fragrance?.family)
+            : fragrance) && (
             <div className="flex gap-2 mb-4 flex-wrap">
-              <Chip>{fragrance.family}</Chip>
-              {product.tags.map((t) => (
-                <Chip key={t}>{t}</Chip>
-              ))}
+              {isBundle ? (
+                <>
+                  <Chip>Combo</Chip>
+                  {bundleItems.map(
+                    (item) =>
+                      item.fragrance?.family && (
+                        <Chip key={item.id}>{item.fragrance.family}</Chip>
+                      ),
+                  )}
+                </>
+              ) : (
+                <>
+                  <Chip>{fragrance!.family}</Chip>
+                  {product.tags.map((t) => (
+                    <Chip key={t}>{t}</Chip>
+                  ))}
+                </>
+              )}
             </div>
           )}
           <Display className="text-display-lg-mobile md:text-display-lg mb-4">
@@ -125,7 +143,17 @@ export default async function ProductPage({ params }: PDPProps) {
         </Reveal>
       )}
 
-      {fragrance && (
+      {bundleFragrances.map((item) => (
+        <Reveal key={item.id}>
+          <NotePyramid
+            title={item.title}
+            fragrance={item.fragrance!}
+            className="mb-12 md:mb-16 py-12 border-t border-outline-variant/30"
+          />
+        </Reveal>
+      ))}
+
+      {!isBundle && fragrance && (
         <Reveal>
           <NotePyramid
             fragrance={fragrance}

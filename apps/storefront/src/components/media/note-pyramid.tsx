@@ -3,10 +3,12 @@ import { Eyebrow } from "@/components/typography/display";
 
 interface NotePyramidProps {
   fragrance: FragranceProfile;
+  /** e.g. perfume name on combo PDPs */
+  title?: string;
   className?: string;
 }
 
-export function NotePyramid({ fragrance, className }: NotePyramidProps) {
+export function NotePyramid({ fragrance, title, className }: NotePyramidProps) {
   const layers = [
     { label: "Top", notes: fragrance.topNotes },
     { label: "Heart", notes: fragrance.heartNotes },
@@ -15,7 +17,9 @@ export function NotePyramid({ fragrance, className }: NotePyramidProps) {
 
   return (
     <section className={className}>
-      <Eyebrow className="mb-8 text-center">Note Pyramid</Eyebrow>
+      <Eyebrow className="mb-8 text-center">
+        {title ? `${title} — Note Pyramid` : "Note Pyramid"}
+      </Eyebrow>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
         {layers.map((layer) => (
           <div key={layer.label} className="text-center">
