@@ -23,7 +23,7 @@ export function ProductCard({ product, cart, className }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "flex flex-col overflow-hidden rounded-lg border border-primary bg-surface-container-lowest shadow-[0_4px_24px_rgba(124,44,46,0.06)]",
+        "flex flex-col overflow-hidden rounded-lg border-2 border-primary bg-surface-container-lowest shadow-[0_4px_24px_rgba(124,44,46,0.06)]",
         className,
       )}
     >

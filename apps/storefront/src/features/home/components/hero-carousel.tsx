@@ -72,7 +72,7 @@ export function HeroCarousel({ products }: HeroCarouselProps) {
         <Eyebrow className="text-primary text-[10px] md:text-xs tracking-[0.22em] font-medium">
           The New Signature
         </Eyebrow>
-        <Display className="text-balance text-[28px] sm:text-[36px] md:text-display-lg leading-[1.05] tracking-[-0.03em] text-[#1d1d1f] font-normal">
+        <Display className="text-balance text-[28px] sm:text-[36px] md:text-display-lg leading-[1.05] tracking-[-0.03em] text-primary font-normal">
           Whispers of Grace
         </Display>
         <BodyText
