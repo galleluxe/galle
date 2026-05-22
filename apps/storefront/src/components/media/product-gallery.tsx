@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GalleImage } from "./galle-image";
 import { cn } from "@/lib/utils";
@@ -13,43 +13,89 @@ interface ProductGalleryProps {
 export function ProductGallery({ images, alt }: ProductGalleryProps) {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [isAutoplay, setIsAutoplay] = useState(true);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1); // Scale inside lightbox: 1x, 2x, 3x
+
+  // Touch Swipe Gesture State
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 40; // pixels
 
   const main = images[active] ?? images[0];
+
+  // Auto-play effect with 2s interval
+  useEffect(() => {
+    if (images.length <= 1 || !isAutoplay) return;
+
+    const interval = setInterval(() => {
+      setDirection(1);
+      setActive((prev) => (prev + 1) % images.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [images.length, isAutoplay]);
 
   if (!main) return null;
 
   const handleNext = () => {
+    setIsAutoplay(false); // Stop autoplay on interaction
     setDirection(1);
     setActive((prev) => (prev + 1) % images.length);
   };
 
   const handlePrev = () => {
+    setIsAutoplay(false); // Stop autoplay on interaction
     setDirection(-1);
     setActive((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // Variants for luxury cross-fade and gentle scale zoom transition
+  // Touch handlers for swiping
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsAutoplay(false); // Touch interaction stops autoplay
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart === null || touchEnd === null) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
+  };
+
+  // Variants for luxury cross-fade transition
   const slideVariants = {
     enter: (dir: number) => ({
       opacity: 0,
-      scale: 1.02,
-      x: dir * 15,
+      scale: 1.01,
+      x: dir * 10,
     }),
     center: {
       opacity: 1,
       scale: 1,
       x: 0,
       transition: {
-        duration: 0.5,
-        ease: [0.16, 1, 0.3, 1], // premium custom cubic bezier
+        duration: 0.4,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
     exit: (dir: number) => ({
       opacity: 0,
-      scale: 0.98,
-      x: -dir * 15,
+      scale: 0.99,
+      x: -dir * 10,
       transition: {
-        duration: 0.4,
+        duration: 0.3,
         ease: [0.16, 1, 0.3, 1],
       },
     }),
@@ -58,7 +104,16 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
   return (
     <div className="flex flex-col gap-6 md:gap-8 select-none">
       {/* Main Large Image Display */}
-      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden ambient-shadow bg-surface-container-low group">
+      <div 
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onClick={() => {
+          setIsAutoplay(false);
+          setIsLightboxOpen(true);
+        }}
+        className="relative aspect-[3/4] rounded-2xl overflow-hidden ambient-shadow bg-surface-container-low group cursor-zoom-in"
+      >
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={active}
@@ -75,32 +130,10 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
               fill
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover transition-transform duration-700 hover:scale-105"
+              className="object-cover transition-transform duration-700 hover:scale-[1.03]"
             />
           </motion.div>
         </AnimatePresence>
-
-        {/* Delicate navigation arrows (visible on hover) */}
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={handlePrev}
-              type="button"
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface/40 backdrop-blur-md text-primary flex items-center justify-center border border-outline-variant/20 opacity-0 group-hover:opacity-100 active:scale-95 transition-all duration-300 hover:bg-surface/70"
-              aria-label="Previous image"
-            >
-              <span className="material-symbols-outlined text-lg">chevron_left</span>
-            </button>
-            <button
-              onClick={handleNext}
-              type="button"
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface/40 backdrop-blur-md text-primary flex items-center justify-center border border-outline-variant/20 opacity-0 group-hover:opacity-100 active:scale-95 transition-all duration-300 hover:bg-surface/70"
-              aria-label="Next image"
-            >
-              <span className="material-symbols-outlined text-lg">chevron_right</span>
-            </button>
-          </>
-        )}
 
         {/* Elegant overlay counter */}
         {images.length > 1 && (
@@ -118,9 +151,10 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
               const isSelected = i === active;
               return (
                 <button
-                  key={`${src}-${i}`} // UNIQUE KEY matching fix
+                  key={`${src}-${i}`}
                   type="button"
                   onClick={() => {
+                    setIsAutoplay(false); // Stop autoplay on interaction
                     setDirection(i > active ? 1 : -1);
                     setActive(i);
                   }}
@@ -128,7 +162,7 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
                     "relative shrink-0 w-16 aspect-[3/4] rounded-xl overflow-hidden border-2 transition-all duration-300",
                     isSelected
                       ? "border-primary scale-105 shadow-md"
-                      : "border-transparent opacity-50 hover:opacity-100 hover:scale-102"
+                      : "border-transparent opacity-50 hover:opacity-100"
                   )}
                 >
                   <GalleImage
@@ -150,6 +184,7 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
                 key={`dot-${i}`}
                 type="button"
                 onClick={() => {
+                  setIsAutoplay(false); // Stop autoplay
                   setDirection(i > active ? 1 : -1);
                   setActive(i);
                 }}
@@ -165,6 +200,100 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
           </div>
         </div>
       )}
+
+      {/* Premium Lightbox Zoom Overlay */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-md select-none touch-none"
+          >
+            {/* Header controls */}
+            <div className="flex items-center justify-between px-6 py-4 text-white z-10">
+              <span className="font-label-caps text-xs tracking-widest uppercase opacity-70">
+                {alt} — Details {active + 1}/{images.length}
+              </span>
+              <div className="flex items-center gap-4">
+                {/* Double click/click zoom info */}
+                <span className="hidden sm:inline font-body-md text-xs opacity-50">
+                  {zoomScale > 1 ? "Drag to explore · Click to reset" : "Click image to zoom in further"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setZoomScale(s => (s === 1 ? 2.5 : 1))}
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  aria-label="Toggle zoom factor"
+                >
+                  <span className="material-symbols-outlined text-lg">
+                    {zoomScale > 1 ? "zoom_out" : "zoom_in"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setZoomScale(1);
+                    setIsLightboxOpen(false);
+                  }}
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  aria-label="Close details"
+                >
+                  <span className="material-symbols-outlined text-lg">close</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Lightbox main zoomable container */}
+            <div className="flex-1 relative flex items-center justify-center p-4 overflow-hidden">
+              <motion.div 
+                className={cn(
+                  "relative w-full h-full max-w-4xl max-h-[80vh] flex items-center justify-center",
+                  zoomScale > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"
+                )}
+                onClick={() => {
+                  setZoomScale(s => (s === 1 ? 2.5 : 1));
+                }}
+              >
+                <motion.div
+                  drag={zoomScale > 1}
+                  dragConstraints={{ left: -400, right: 400, top: -400, bottom: 400 }}
+                  dragElastic={0.15}
+                  animate={{ scale: zoomScale }}
+                  transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                  className="relative w-full h-full"
+                >
+                  <img
+                    src={main}
+                    alt={`${alt} detailed view`}
+                    className="w-full h-full object-contain pointer-events-none"
+                  />
+                </motion.div>
+              </motion.div>
+
+              {/* Prev / Next Swipe Hints on Desktop */}
+              {images.length > 1 && zoomScale === 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                    className="absolute left-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all active:scale-95"
+                  >
+                    <span className="material-symbols-outlined">chevron_left</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                    className="absolute right-6 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all active:scale-95"
+                  >
+                    <span className="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

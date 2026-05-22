@@ -9,7 +9,7 @@ import { resolveProductImageUrl } from "@/lib/catalog/resolve-image";
 import type { Product } from "@/lib/catalog/types";
 import { cn } from "@/lib/utils";
 
-const INTERVAL_MS = 4000; // Increased to 4s for luxury pacing and better readability
+const INTERVAL_MS = 1500; // Reduced to 1.5s for faster luxury transition pacing
 
 interface HeroCarouselProps {
   products: Product[];

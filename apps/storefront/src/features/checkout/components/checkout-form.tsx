@@ -103,13 +103,20 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
 
     try {
       const checkout = await prepareCheckoutAction();
+      if ("error" in checkout && checkout.error) {
+        setError(checkout.error);
+        setLoading(false);
+        setStep("form");
+        return;
+      }
+
       await loadRazorpayScript();
 
       const rzp = new window.Razorpay({
         key,
-        amount: checkout.amountPaise,
+        amount: checkout.amountPaise!,
         currency: "INR",
-        order_id: checkout.razorpayOrderId,
+        order_id: checkout.razorpayOrderId!,
         name: "GALLE",
         description: "GALLE fragrance order",
         prefill: {
@@ -121,7 +128,7 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
         handler: (response) => {
           void finishOrder(
             response.razorpay_payment_id,
-            response.razorpay_order_id ?? checkout.razorpayOrderId,
+            response.razorpay_order_id ?? checkout.razorpayOrderId!,
           );
         },
         modal: {
@@ -220,9 +227,6 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
               {formatINR(cart.subtotalPaise)}
             </p>
           </div>
-          <p className="font-body-md text-body-md text-on-surface-variant mb-6">
-            Free shipping. Payment secured via Razorpay (test mode when using test keys).
-          </p>
           {error && <p className="text-error text-sm mb-4 text-center">{error}</p>}
           <Button type="submit" variant="primary" className="w-full py-4 text-center" disabled={loading}>
             {loading ? "Opening Razorpay…" : "Pay with Razorpay"}

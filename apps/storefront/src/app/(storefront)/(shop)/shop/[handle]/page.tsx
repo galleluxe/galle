@@ -9,6 +9,7 @@ import { ProductGallery } from "@/components/media/product-gallery";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { ProductGrid } from "@/features/catalog/components/product-grid";
 import { AddToCartButton } from "@/features/cart/components/add-to-cart-button";
+import { BuyNowButton } from "@/features/cart/components/buy-now-button";
 import { Reveal } from "@/components/motion/reveal";
 import { getProduct, listProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
@@ -67,7 +68,7 @@ export default async function ProductPage({ params }: PDPProps) {
         <span className="text-primary">{product.title}</span>
       </nav>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-section-gap">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-12 md:mb-16">
         <Reveal>
           <ProductGallery
             images={product.images.length > 0 ? product.images : [product.thumbnail]}
@@ -99,12 +100,10 @@ export default async function ProductPage({ params }: PDPProps) {
                   variantId={variant.id}
                   productHandle={product.handle}
                 />
-                <Link
-                  href="/checkout"
-                  className="inline-flex items-center justify-center border border-secondary-fixed-dim text-primary px-8 py-3 font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container transition-colors rounded-none"
-                >
-                  Buy Now
-                </Link>
+                <BuyNowButton
+                  variantId={variant.id}
+                  productHandle={product.handle}
+                />
               </div>
             </>
           )}
@@ -115,7 +114,7 @@ export default async function ProductPage({ params }: PDPProps) {
         <Reveal>
           <NotePyramid
             fragrance={fragrance}
-            className="mb-section-gap py-12 border-t border-outline-variant/30"
+            className="mb-12 md:mb-16 py-12 border-t border-outline-variant/30"
           />
         </Reveal>
       )}

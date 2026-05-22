@@ -27,26 +27,34 @@ interface OrderInput {
 }
 
 export async function prepareCheckoutAction() {
-  const stored = await getStoredCart();
-  const resolved = await resolveCartLines(stored.lines);
+  try {
+    const stored = await getStoredCart();
+    const resolved = await resolveCartLines(stored.lines);
 
-  if (resolved.subtotalPaise < 100) {
-    throw new Error("Cart is empty or total is too low.");
+    if (resolved.subtotalPaise < 100) {
+      return { error: "Cart is empty or total is too low." };
+    }
+
+    const orderNumber = `GALLE-${Math.floor(100000 + Math.random() * 900000)}`;
+    const razorpayOrder = await createRazorpayOrder(
+      resolved.subtotalPaise,
+      orderNumber,
+    );
+
+    return {
+      success: true,
+      razorpayOrderId: razorpayOrder.id,
+      amountPaise: resolved.subtotalPaise,
+      orderNumber,
+      basePaise: resolved.basePaise,
+      gstPaise: resolved.gstPaise,
+    };
+  } catch (err) {
+    console.error("prepareCheckoutAction failed:", err);
+    return {
+      error: err instanceof Error ? err.message : "Failed to prepare Razorpay order.",
+    };
   }
-
-  const orderNumber = `GALLE-${Math.floor(100000 + Math.random() * 900000)}`;
-  const razorpayOrder = await createRazorpayOrder(
-    resolved.subtotalPaise,
-    orderNumber,
-  );
-
-  return {
-    razorpayOrderId: razorpayOrder.id,
-    amountPaise: resolved.subtotalPaise,
-    orderNumber,
-    basePaise: resolved.basePaise,
-    gstPaise: resolved.gstPaise,
-  };
 }
 
 export async function completeOrderAction(input: OrderInput) {
