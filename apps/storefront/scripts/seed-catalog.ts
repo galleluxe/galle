@@ -240,12 +240,35 @@ const CATALOG: ProductSeed[] = [
   },
 ];
 
-async function upsertProduct(payload: Awaited<ReturnType<typeof getPayload>>, seed: ProductSeed) {
+async function findProductIdByHandle(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  handle: string,
+): Promise<number | null> {
+  const { docs } = await payload.find({
+    collection: "products",
+    where: { handle: { equals: handle } },
+    limit: 1,
+  });
+  const id = docs[0]?.id;
+  return typeof id === "number" ? id : null;
+}
+
+async function upsertProduct(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  seed: ProductSeed,
+  options?: { bundledProductHandles?: string[] },
+) {
   const existing = await payload.find({
     collection: "products",
     where: { handle: { equals: seed.handle } },
     limit: 1,
   });
+
+  const bundledIds: number[] = [];
+  for (const handle of options?.bundledProductHandles ?? []) {
+    const id = await findProductIdByHandle(payload, handle);
+    if (id != null) bundledIds.push(id);
+  }
 
   const productData = {
     title: seed.title,
@@ -266,6 +289,7 @@ async function upsertProduct(payload: Awaited<ReturnType<typeof getPayload>>, se
     sillage: seed.sillage,
     occasion: seed.occasion,
     editorialPullquote: seed.editorialPullquote,
+    ...(bundledIds.length > 0 ? { bundledProducts: bundledIds } : {}),
   };
 
   let productId: number | string;
@@ -326,6 +350,41 @@ console.log("\nSeeding GALLE catalog into Payload…\n");
 for (const seed of CATALOG) {
   await upsertProduct(payload, seed);
 }
+
+const PHANTOM_LUXE: ProductSeed = {
+  title: "Phantom Luxe",
+  handle: "phantom-luxe",
+  subtitle: "Entice · White Oud — dual signature",
+  description:
+    "A curated duo pairing Entice’s intimate rose and musk with White Oud’s luminous agarwood trail. Two 50ml signatures in one gift-worthy set — save versus buying separately.",
+  noteLine: "Entice · White Oud",
+  thumbnailUrl: `${IK}/3.png`,
+  imageUrls: [
+    { url: `${IK}/3.png` },
+    { url: `${IK}/1.png` },
+    { url: `${IK}/5.png` },
+  ],
+  featured: true,
+  fragranceFamily: "Oriental",
+  topNotes: [{ note: "Grapefruit" }, { note: "Warm Spicy" }, { note: "Citrus" }],
+  heartNotes: [{ note: "Rose" }, { note: "White Floral" }, { note: "Jasmine" }],
+  baseNotes: [{ note: "Agarwood (Oud)" }, { note: "White Musk" }, { note: "Sandalwood" }],
+  longevityHours: 10,
+  sillage: "Strong",
+  occasion: [{ label: "Evening" }, { label: "Gift" }],
+  editorialPullquote:
+    "Rose intimacy meets luminous oud — the contrast that defines Phantom Luxe.",
+  variant: {
+    title: "Combo (2 × 50ml)",
+    sku: "PHANTOM-LUXE-COMBO",
+    pricePaise: 1350000,
+    inventory: 50,
+  },
+};
+
+await upsertProduct(payload, PHANTOM_LUXE, {
+  bundledProductHandles: ["entice", "white-oud"],
+});
 
 console.log("\nDone. Refresh http://localhost:3000/shop\n");
 

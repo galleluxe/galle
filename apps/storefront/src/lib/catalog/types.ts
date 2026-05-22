@@ -40,6 +40,8 @@ export interface Product {
   tags: string[];
   featured?: boolean;
   bentoSize?: "large" | "standard";
+  /** Populated when this product is a combo/bundle. */
+  bundledProducts?: Product[];
 }
 
 export interface CartLine {

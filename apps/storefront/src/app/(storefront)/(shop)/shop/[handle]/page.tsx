@@ -6,6 +6,7 @@ import { Chip } from "@/components/ui/chip";
 import { Display, BodyText, Headline, Eyebrow } from "@/components/typography/display";
 import { NotePyramid } from "@/components/media/note-pyramid";
 import { ProductGallery } from "@/components/media/product-gallery";
+import { BundleContents } from "@/features/catalog/components/bundle-contents";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { ProductGrid } from "@/features/catalog/components/product-grid";
 import { AddToCartButton } from "@/features/cart/components/add-to-cart-button";
@@ -48,6 +49,7 @@ export default async function ProductPage({ params }: PDPProps) {
   const variant = product.variants[0];
   const related = allProducts.filter((p) => p.handle !== handle).slice(0, 3);
   const fragrance = product.fragrance;
+  const bundleItems = product.bundledProducts ?? [];
   const productJsonLd = buildProductJsonLd(product);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: "https://galle.com" },
@@ -116,6 +118,12 @@ export default async function ProductPage({ params }: PDPProps) {
           )}
         </div>
       </div>
+
+      {bundleItems.length > 0 && (
+        <Reveal>
+          <BundleContents products={bundleItems} />
+        </Reveal>
+      )}
 
       {fragrance && (
         <Reveal>

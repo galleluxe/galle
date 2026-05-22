@@ -154,5 +154,6 @@ export function mapPayloadToProduct(
       inventory: Number(v.inventory),
     })),
     fragrance,
+    bundledProducts: undefined,
   };
 }

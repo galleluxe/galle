@@ -13,6 +13,7 @@ async function fetchPublishedProducts(): Promise<Product[]> {
     where: { status: { equals: "published" } },
     limit: 100,
     sort: "title",
+    depth: 1,
   });
 
   // 2. Fetch all available variants in one single query to eliminate N+1 database queries
@@ -49,6 +50,29 @@ async function fetchPublishedProducts(): Promise<Product[]> {
     result.push(product);
   }
 
+  const byId = new Map(result.map((p) => [p.id, p]));
+
+  for (const raw of products) {
+    const product = byId.get(String(raw.id));
+    if (!product) continue;
+
+    const bundled = (raw as { bundledProducts?: unknown }).bundledProducts;
+    if (!Array.isArray(bundled) || bundled.length === 0) continue;
+
+    const resolved: Product[] = [];
+    for (const entry of bundled) {
+      const bundledId =
+        typeof entry === "object" && entry !== null && "id" in entry
+          ? String((entry as { id: unknown }).id)
+          : String(entry);
+      const match = byId.get(bundledId);
+      if (match) resolved.push(match);
+    }
+    if (resolved.length > 0) {
+      product.bundledProducts = resolved;
+    }
+  }
+
   return result;
 }
 
@@ -58,7 +82,7 @@ export const getCachedPublishedProducts = unstable_cache(
   async () => {
     return fetchPublishedProducts();
   },
-  ["published-catalog-products-v1"],
+  ["published-catalog-products-v2"],
   {
     tags: ["catalog", "shop"],
     revalidate: 3600, // Fallback revalidation of 1 hour

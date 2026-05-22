@@ -28,7 +28,10 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || "",
       max: process.env.VERCEL ? 3 : 10,
     },
-    push: process.env.NODE_ENV !== "production",
+    push:
+      process.env.PAYLOAD_DISABLE_PUSH === "true"
+        ? false
+        : process.env.NODE_ENV !== "production",
   }),
   routes: {
     admin: "/admin",

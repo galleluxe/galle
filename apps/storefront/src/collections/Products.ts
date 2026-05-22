@@ -83,6 +83,16 @@ export const Products: CollectionConfig = {
       defaultValue: "standard",
     },
     {
+      name: "bundledProducts",
+      type: "relationship",
+      relationTo: "products",
+      hasMany: true,
+      admin: {
+        description:
+          "For combos: link the individual perfumes included in this bundle.",
+      },
+    },
+    {
       name: "status",
       type: "select",
       options: [

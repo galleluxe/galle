@@ -177,6 +177,10 @@ export interface Product {
     | null;
   featured?: boolean | null;
   bentoSize?: ('standard' | 'large') | null;
+  /**
+   * For combos: link the individual perfumes included in this bundle.
+   */
+  bundledProducts?: (number | Product)[] | null;
   status: 'draft' | 'published';
   fragranceFamily?: ('Floral' | 'Woody' | 'Fresh' | 'Amber' | 'Oriental' | 'Citrus') | null;
   topNotes?:
@@ -414,6 +418,7 @@ export interface ProductsSelect<T extends boolean = true> {
       };
   featured?: T;
   bentoSize?: T;
+  bundledProducts?: T;
   status?: T;
   fragranceFamily?: T;
   topNotes?:
