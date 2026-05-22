@@ -5,7 +5,6 @@ import { Display, BodyText } from "@/components/typography/display";
 import { FilterBar } from "@/features/catalog/components/filter-bar";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { ProductGrid } from "@/features/catalog/components/product-grid";
-import { getCart } from "@/features/cart/server/store";
 import { listProducts } from "@/lib/catalog";
 
 export const revalidate = 600;
@@ -17,10 +16,7 @@ interface ShopPageProps {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const { family } = await searchParams;
   const activeFamily = family?.toUpperCase();
-  const [products, cart] = await Promise.all([
-    listProducts(activeFamily && activeFamily !== "ALL" ? activeFamily : undefined),
-    getCart(),
-  ]);
+  const products = await listProducts(activeFamily && activeFamily !== "ALL" ? activeFamily : undefined);
 
   return (
     <NuqsAdapter>
@@ -46,7 +42,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           ) : (
             <ProductGrid>
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} cart={cart} />
+                <ProductCard key={product.id} product={product} />
               ))}
             </ProductGrid>
           )}

@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { getDb, isDbConfigured } from "@/lib/db/client";
 import { newsletterSubscribers } from "@/lib/db/schema";
+import { getPayloadClient } from "@/lib/payload";
 
 const schema = z.object({ email: z.string().email() });
 
@@ -60,3 +61,79 @@ export async function subscribeNewsletter(
     return { success: false, message: "Something went wrong. Please try again." };
   }
 }
+
+const vipSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  phone: z.string().min(10, "Phone number must be at least 10 digits."),
+  city: z.string().min(2, "City must be at least 2 characters."),
+  marketingOptIn: z.boolean().optional(),
+});
+
+export async function vipSignupAction(input: {
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  marketingOptIn?: boolean;
+}) {
+  const parsed = vipSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, message: parsed.error.errors[0]?.message ?? "Invalid fields" };
+  }
+
+  try {
+    const payload = await getPayloadClient();
+    
+    // Check if email already exists
+    const existing = await payload.find({
+      collection: "signups",
+      where: {
+        email: {
+          equals: parsed.data.email,
+        },
+      },
+    });
+
+    if (existing.docs.length > 0) {
+      return { success: true, message: "Welcome back! You are already subscribed to our list." };
+    }
+
+    await payload.create({
+      collection: "signups",
+      data: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        city: parsed.data.city,
+        marketingOptIn: parsed.data.marketingOptIn ?? true,
+      },
+    });
+
+    // Send a beautiful confirmation email via Resend
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    if (RESEND_API_KEY && RESEND_API_KEY !== "re_stub12345") {
+      try {
+        const { Resend } = await import("resend");
+        const resend = new Resend(RESEND_API_KEY);
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL ?? "GALLE <hello@galleluxe.com>",
+          to: parsed.data.email,
+          subject: "Welcome to the Maison GALLE Club",
+          text: `Dear ${parsed.data.name},\n\nThank you for registering. You have joined the Maison Club, unlocking complimentary luxury samples with your first order.\n\nWarmest regards,\nMaison GALLE`,
+        });
+      } catch (e) {
+        console.error("Resend error in VIP signup:", e);
+      }
+    }
+
+    return {
+      success: true,
+      message: "Welcome to the Maison Club. Complimentary samples await your first purchase.",
+    };
+  } catch (err) {
+    console.error("VIP signup error:", err);
+    return { success: false, message: "Something went wrong. Please try again." };
+  }
+}
+

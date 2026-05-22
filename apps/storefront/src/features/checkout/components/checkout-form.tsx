@@ -49,6 +49,8 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
     postalCode: "",
     province: "",
   });
+  const [isGift, setIsGift] = useState(false);
+  const [giftMessage, setGiftMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -61,6 +63,8 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
           ...form,
           razorpayPaymentId,
           razorpayOrderId,
+          isGift,
+          giftMessage,
         });
 
         if (result?.success) {
@@ -76,7 +80,7 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
         setStep("form");
       }
     },
-    [form, router],
+    [form, router, isGift, giftMessage],
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,8 +140,9 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
 
       rzp.open();
     } catch (err) {
-      console.error(err);
-      setError("Could not open Razorpay checkout. Please try again.");
+      console.error("Razorpay Error details:", err);
+      const errMsg = err instanceof Error ? err.message : "Could not open Razorpay checkout";
+      setError(`${errMsg}. Please try again.`);
       setLoading(false);
       setStep("form");
     }
@@ -176,6 +181,36 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
             <Input label="PIN code" name="postalCode" value={form.postalCode} onChange={handleChange} required />
             <Input label="State" name="province" value={form.province} onChange={handleChange} required className="sm:col-span-2" />
           </div>
+        </section>
+
+        <section className="border-t border-outline-variant/30 pt-8">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="isGift"
+              checked={isGift}
+              onChange={(e) => setIsGift(e.target.checked)}
+              className="w-5 h-5 rounded-none border-2 border-primary text-primary focus:ring-primary focus:ring-offset-0 accent-primary cursor-pointer"
+            />
+            <label htmlFor="isGift" className="font-headline-sm text-sm text-primary uppercase tracking-widest cursor-pointer select-none">
+              Send as a gift
+            </label>
+          </div>
+          {isGift && (
+            <div className="mt-4 animate-fade-in space-y-2">
+              <label htmlFor="giftMessage" className="block font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest font-semibold">
+                Gift Message (will be printed on a luxury card)
+              </label>
+              <textarea
+                id="giftMessage"
+                rows={3}
+                placeholder="Write your personal message here..."
+                value={giftMessage}
+                onChange={(e) => setGiftMessage(e.target.value)}
+                className="w-full bg-surface-container-lowest border border-outline-variant/50 p-4 font-body-md text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors rounded-none"
+              />
+            </div>
+          )}
         </section>
 
         <section className="border-t border-outline-variant/30 pt-8">

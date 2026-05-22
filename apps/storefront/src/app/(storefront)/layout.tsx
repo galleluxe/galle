@@ -3,6 +3,7 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { Footer } from "@/components/layout/footer";
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 import { Navbar } from "@/components/layout/navbar";
+import { NewsletterPopup } from "@/components/layout/newsletter-popup";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "@/providers";
 import { fontVariables, outfit } from "@/design-system/fonts";
@@ -41,6 +42,7 @@ export default function StorefrontLayout({
         <Providers>
           <Navbar />
           <CartDrawer />
+          <NewsletterPopup />
           <main className="flex-grow pt-20 md:pt-24 pb-12">{children}</main>
           <Footer />
           <MobileTabBar />

@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { PageShell } from "./page-shell";
+import { FooterNewsletter } from "./footer-newsletter";
 
 export function Footer() {
   return (
     <footer className="bg-surface-container-low border-t border-outline-variant/30 mt-section-gap pb-16">
-      <PageShell className="py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
-        <div className="md:col-span-2">
-          <p className="font-headline-md text-headline-md tracking-[0.3em] text-primary uppercase mb-4">
+      <PageShell className="py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+        <div className="space-y-4">
+          <p className="font-headline-md text-headline-md tracking-[0.3em] text-primary uppercase">
             GALLE
           </p>
-          <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">
+          <p className="font-body-md text-body-md text-on-surface-variant">
             Ethereal essences crafted in India. Olfactory grace for the
             discerning.
           </p>
@@ -67,6 +68,9 @@ export function Footer() {
               </Link>
             </li>
           </ul>
+        </div>
+        <div>
+          <FooterNewsletter />
         </div>
       </PageShell>
       <PageShell className="pb-8 border-t border-outline-variant/20 pt-8">

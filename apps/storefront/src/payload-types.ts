@@ -71,6 +71,7 @@ export interface Config {
     products: Product;
     'product-variants': ProductVariant;
     orders: Order;
+    signups: Signup;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     'product-variants': ProductVariantsSelect<false> | ProductVariantsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
+    signups: SignupsSelect<false> | SignupsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -266,6 +268,22 @@ export interface Order {
     | number
     | boolean
     | null;
+  isGift?: boolean | null;
+  giftMessage?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "signups".
+ */
+export interface Signup {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  marketingOptIn?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -308,6 +326,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'orders';
         value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'signups';
+        value: number | Signup;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -453,6 +475,21 @@ export interface OrdersSelect<T extends boolean = true> {
   razorpayOrderId?: T;
   lines?: T;
   shippingAddress?: T;
+  isGift?: T;
+  giftMessage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "signups_select".
+ */
+export interface SignupsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  city?: T;
+  marketingOptIn?: T;
   updatedAt?: T;
   createdAt?: T;
 }

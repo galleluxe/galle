@@ -6,7 +6,6 @@ import { HeroCarousel } from "@/features/home/components/hero-carousel";
 import { ProductCarouselRow } from "@/features/home/components/product-carousel-row";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { ProductGrid } from "@/features/catalog/components/product-grid";
-import { getCart } from "@/features/cart/server/store";
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
 import { HomeReviewsSection } from "@/components/reviews/product-reviews";
 import { listProducts } from "@/lib/catalog";
@@ -17,7 +16,7 @@ export const revalidate = 600;
 const FAMILIES = ["Floral", "Woody", "Fresh", "Oriental"] as const;
 
 export default async function HomePage() {
-  const [products, cart] = await Promise.all([listProducts(), getCart()]);
+  const products = await listProducts();
   const journalPosts = getAllPosts().slice(0, 2);
   const collection = products.slice(0, 5);
   const featured = products.slice(0, 2);
@@ -30,22 +29,67 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
-      <section className="mb-12 md:mb-section-gap border-y border-outline-variant/30 py-10 md:py-16">
+      <section className="mb-12 md:mb-section-gap border-y border-outline-variant/30 py-10 md:py-16 overflow-hidden">
         <PageShell>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="flex gap-6 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth hide-scrollbar md:grid md:grid-cols-5 md:pb-0">
             {[
-              { icon: "eco", title: "Sustainable", desc: "Ethically sourced botanicals" },
-              { icon: "verified", title: "Authentic", desc: "Crafted in small batches" },
-              { icon: "local_shipping", title: "India-wide", desc: "Shiprocket delivery" },
+              {
+                icon: (
+                  <svg className="w-12 h-12 text-secondary mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707.707M12 5a7 7 0 00-7 7 3 3 0 003 3h8a3 3 0 003-3 7 7 0 00-7-7z" />
+                  </svg>
+                ),
+                title: "Natural Ingredients",
+                desc: "Only the purest, safest botanicals."
+              },
+              {
+                icon: (
+                  <svg className="w-12 h-12 text-secondary mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                ),
+                title: "IFRA Certified",
+                desc: "International Fragrance Association Certified"
+              },
+              {
+                icon: (
+                  <svg className="w-12 h-12 text-secondary mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                ),
+                title: "Cruelty-Free",
+                desc: "Never tested on animals."
+              },
+              {
+                icon: (
+                  <svg className="w-12 h-12 text-secondary mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
+                ),
+                title: "Non-Carcinogenic",
+                desc: "No harmful chemicals or toxins."
+              },
+              {
+                icon: (
+                  <svg className="w-12 h-12 text-secondary mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                ),
+                title: "Paraben-Free",
+                desc: "Gentle and safe for all skin types."
+              }
             ].map((item) => (
-              <div key={item.title}>
-                <span className="material-symbols-outlined text-3xl text-secondary mb-4 block">
-                  {item.icon}
-                </span>
-                <p className="font-headline-sm text-headline-sm text-primary mb-2">
+              <div
+                key={item.title}
+                className="w-[240px] shrink-0 snap-center bg-[#FCFBF9] border border-outline-variant/20 p-6 md:p-8 text-center md:w-auto"
+              >
+                {item.icon}
+                <p className="font-headline-sm text-sm text-primary mb-2 uppercase tracking-widest font-semibold">
                   {item.title}
                 </p>
-                <BodyText>{item.desc}</BodyText>
+                <p className="font-body-md text-xs text-on-surface-variant leading-relaxed">
+                  {item.desc}
+                </p>
               </div>
             ))}
           </div>

@@ -63,7 +63,7 @@ export function ProductReviews({
   const average = getAverageRating(productHandle);
 
   return (
-    <section className="mb-section-gap py-12 border-t border-outline-variant/30">
+    <section className="mb-8 py-12 border-t border-outline-variant/30">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
           <Eyebrow className="mb-2">Maison Voices</Eyebrow>

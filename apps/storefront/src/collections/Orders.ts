@@ -64,5 +64,14 @@ export const Orders: CollectionConfig = {
       type: "json",
       required: true,
     },
+    {
+      name: "isGift",
+      type: "checkbox",
+      defaultValue: false,
+    },
+    {
+      name: "giftMessage",
+      type: "textarea",
+    },
   ],
 };

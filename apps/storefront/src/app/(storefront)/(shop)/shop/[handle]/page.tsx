@@ -10,7 +10,6 @@ import { ProductCard } from "@/features/catalog/components/product-card";
 import { ProductGrid } from "@/features/catalog/components/product-grid";
 import { AddToCartButton } from "@/features/cart/components/add-to-cart-button";
 import { Reveal } from "@/components/motion/reveal";
-import { getCart } from "@/features/cart/server/store";
 import { getProduct, listProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
 import { ProductReviews } from "@/components/reviews/product-reviews";
@@ -31,9 +30,8 @@ export const revalidate = 600;
 
 export default async function ProductPage({ params }: PDPProps) {
   const { handle } = await params;
-  const [product, cart, allProducts] = await Promise.all([
+  const [product, allProducts] = await Promise.all([
     getProduct(handle),
-    getCart(),
     listProducts(),
   ]);
 
@@ -50,7 +48,7 @@ export default async function ProductPage({ params }: PDPProps) {
   ]);
 
   return (
-    <PageShell className="pt-8 pb-section-gap">
+    <PageShell className="pt-8 pb-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
@@ -100,7 +98,6 @@ export default async function ProductPage({ params }: PDPProps) {
                 <AddToCartButton
                   variantId={variant.id}
                   productHandle={product.handle}
-                  cart={cart}
                 />
                 <Link
                   href="/checkout"
@@ -128,7 +125,7 @@ export default async function ProductPage({ params }: PDPProps) {
           <Headline className="mb-8 text-center">You May Also Love</Headline>
           <ProductGrid>
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} cart={cart} />
+              <ProductCard key={p.id} product={p} />
             ))}
           </ProductGrid>
         </section>

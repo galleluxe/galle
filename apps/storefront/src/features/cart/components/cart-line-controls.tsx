@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { removeFromCart, updateCartLine } from "../server/actions";
+import { useCartDrawer } from "@/providers/cart-provider";
 
 interface CartLineControlsProps {
   variantId: string;
@@ -15,6 +15,7 @@ export function CartLineControls({
   quantity,
 }: CartLineControlsProps) {
   const [pending, startTransition] = useTransition();
+  const { updateCartItem, removeCartItem } = useCartDrawer();
 
   return (
     <div className="flex items-center gap-4 mt-4">
@@ -23,15 +24,10 @@ export function CartLineControls({
         disabled={pending || quantity <= 1}
         onClick={() =>
           startTransition(async () => {
-            await updateCartLine({
-              variantId,
-              productHandle,
-              quantity: quantity - 1,
-            });
-            window.dispatchEvent(new Event("galle-cart-updated"));
+            await updateCartItem(variantId, productHandle, quantity - 1);
           })
         }
-        className="w-8 h-8 border border-outline-variant rounded-full flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40"
+        className="w-8 h-8 border border-outline-variant rounded-none flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40"
         aria-label="Decrease quantity"
       >
         −
@@ -42,15 +38,10 @@ export function CartLineControls({
         disabled={pending || quantity >= 10}
         onClick={() =>
           startTransition(async () => {
-            await updateCartLine({
-              variantId,
-              productHandle,
-              quantity: quantity + 1,
-            });
-            window.dispatchEvent(new Event("galle-cart-updated"));
+            await updateCartItem(variantId, productHandle, quantity + 1);
           })
         }
-        className="w-8 h-8 border border-outline-variant rounded-full flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40"
+        className="w-8 h-8 border border-outline-variant rounded-none flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40"
         aria-label="Increase quantity"
       >
         +
@@ -60,8 +51,7 @@ export function CartLineControls({
         disabled={pending}
         onClick={() =>
           startTransition(async () => {
-            await removeFromCart(variantId, productHandle);
-            window.dispatchEvent(new Event("galle-cart-updated"));
+            await removeCartItem(variantId, productHandle);
           })
         }
         className="font-label-caps text-[10px] text-outline hover:text-error ml-4 uppercase tracking-widest"

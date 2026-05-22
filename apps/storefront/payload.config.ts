@@ -6,6 +6,7 @@ import { Users } from "./src/collections/Users";
 import { Products } from "./src/collections/Products";
 import { ProductVariants } from "./src/collections/ProductVariants";
 import { Orders } from "./src/collections/Orders";
+import { Signups } from "./src/collections/Signups";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -18,7 +19,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname, "src"),
     },
   },
-  collections: [Users, Products, ProductVariants, Orders],
+  collections: [Users, Products, ProductVariants, Orders, Signups],
   typescript: {
     outputFile: path.resolve(dirname, "src/payload-types.ts"),
   },

@@ -3,53 +3,26 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useCartDrawer } from "@/providers/cart-provider";
-import { updateCartLine, removeFromCart } from "@/features/cart/server/actions";
-import type { Cart } from "@/lib/catalog/types";
 import { formatINR } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 export function CartDrawer() {
-  const { isOpen, close } = useCartDrawer();
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const { isOpen, close, cart, loading, updateCartItem, removeCartItem } = useCartDrawer();
 
-  useEffect(() => {
-    if (!isOpen) return;
-    setLoading(true);
-    fetch("/api/cart")
-      .then((r) => r.json())
-      .then((data) => {
-        setCart(data as Cart);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [isOpen]);
+  const isEmpty = !cart || cart.lines.length === 0;
 
   async function handleQty(
     variantId: string,
     productHandle: string,
     qty: number,
   ) {
-    await updateCartLine({ variantId, productHandle, quantity: qty });
-    router.refresh();
-    const data = await fetch("/api/cart").then((r) => r.json());
-    setCart(data as Cart);
-    window.dispatchEvent(new Event("galle-cart-updated"));
+    await updateCartItem(variantId, productHandle, qty);
   }
 
   async function handleRemove(variantId: string, productHandle: string) {
-    await removeFromCart(variantId, productHandle);
-    router.refresh();
-    const data = await fetch("/api/cart").then((r) => r.json());
-    setCart(data as Cart);
-    window.dispatchEvent(new Event("galle-cart-updated"));
+    await removeCartItem(variantId, productHandle);
   }
-
-  const isEmpty = !cart || cart.lines.length === 0;
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && close()}>
@@ -57,7 +30,7 @@ export function CartDrawer() {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content
           className={cn(
-            "fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-surface shadow-[−20px_0_60px_rgba(111,89,89,0.1)]",
+            "fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-surface shadow-[−20px_0_60px_rgba(111,89,89,0.1)] focus:outline-none",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
             "duration-300",
@@ -66,10 +39,10 @@ export function CartDrawer() {
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-outline-variant/30 px-6 py-5">
-            <Dialog.Title className="font-headline-sm text-headline-sm text-primary uppercase tracking-widest">
+            <Dialog.Title className="font-headline-sm text-headline-sm text-on-surface uppercase tracking-widest">
               Your Bag
               {cart && cart.itemCount > 0 && (
-                <span className="ml-2 text-on-surface-variant font-body-md text-body-md normal-case tracking-normal">
+                <span className="ml-2 text-on-surface-variant font-body-md text-body-md normal-case tracking-normal font-semibold">
                   ({cart.itemCount})
                 </span>
               )}
@@ -83,15 +56,15 @@ export function CartDrawer() {
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto px-6 py-4">
-            {loading ? (
+          <div className="flex-1 overflow-y-auto px-6 py-4 hide-scrollbar">
+            {loading && !cart ? (
               <div className="flex items-center justify-center py-20">
                 <span className="material-symbols-outlined text-3xl text-outline animate-spin">
                   progress_activity
                 </span>
               </div>
             ) : isEmpty ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+              <div className="flex flex-col items-center justify-center py-20 text-center gap-4 animate-fade-in">
                 <span className="material-symbols-outlined text-5xl text-outline-variant">
                   shopping_bag
                 </span>
@@ -101,7 +74,7 @@ export function CartDrawer() {
                 <Dialog.Close asChild>
                   <Link
                     href="/shop"
-                    className="font-label-caps text-label-caps text-primary uppercase tracking-widest hover:underline"
+                    className="font-label-caps text-label-caps text-primary uppercase tracking-widest hover:underline font-semibold"
                   >
                     Explore the Boutique
                   </Link>
@@ -110,11 +83,11 @@ export function CartDrawer() {
             ) : (
               <ul className="divide-y divide-outline-variant/20">
                 {cart!.lines.map((line) => (
-                  <li key={line.id} className="flex gap-4 py-5">
+                  <li key={line.id} className="flex gap-4 py-5 animate-fade-in">
                     <Link
                       href={`/shop/${line.productHandle}`}
                       onClick={close}
-                      className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container-low"
+                      className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-none border border-outline-variant/15 bg-surface-container-low"
                     >
                       <Image
                         src={line.thumbnail}
@@ -129,11 +102,11 @@ export function CartDrawer() {
                         <Link
                           href={`/shop/${line.productHandle}`}
                           onClick={close}
-                          className="font-headline-sm text-headline-sm text-primary hover:underline truncate"
+                          className="font-headline-sm text-sm text-on-surface hover:underline truncate font-semibold"
                         >
                           {line.title}
                         </Link>
-                        <p className="font-body-md text-body-md text-on-surface shrink-0 tabular-nums">
+                        <p className="font-body-md text-body-md text-on-surface shrink-0 tabular-nums font-medium">
                           {formatINR(line.unitPricePaise * line.quantity)}
                         </p>
                       </div>
@@ -149,11 +122,11 @@ export function CartDrawer() {
                               line.quantity - 1,
                             )
                           }
-                          className="w-7 h-7 rounded-full border border-outline-variant flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40 transition-colors"
+                          className="w-7 h-7 rounded-none border border-outline-variant/40 flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40 transition-colors"
                         >
                           −
                         </button>
-                        <span className="font-body-md text-body-md w-4 text-center">
+                        <span className="font-body-md text-body-md w-4 text-center font-medium">
                           {line.quantity}
                         </span>
                         <button
@@ -167,7 +140,7 @@ export function CartDrawer() {
                               line.quantity + 1,
                             )
                           }
-                          className="w-7 h-7 rounded-full border border-outline-variant flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40 transition-colors"
+                          className="w-7 h-7 rounded-none border border-outline-variant/40 flex items-center justify-center text-primary hover:bg-surface-container disabled:opacity-40 transition-colors"
                         >
                           +
                         </button>
@@ -176,7 +149,7 @@ export function CartDrawer() {
                           onClick={() =>
                             handleRemove(line.variantId, line.productHandle)
                           }
-                          className="ml-auto font-label-caps text-[10px] text-outline hover:text-error uppercase tracking-widest transition-colors"
+                          className="ml-auto font-label-caps text-[10px] text-outline hover:text-error uppercase tracking-widest transition-colors font-semibold"
                         >
                           Remove
                         </button>
@@ -192,17 +165,17 @@ export function CartDrawer() {
           {!isEmpty && cart && (
             <div className="border-t border-outline-variant/30 px-6 py-5 space-y-4">
               <div className="flex justify-between items-baseline">
-                <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
+                <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest font-semibold">
                   Subtotal
                 </span>
-                <span className="font-headline-sm text-headline-sm text-on-surface tabular-nums">
+                <span className="font-headline-sm text-headline-sm text-on-surface tabular-nums font-bold">
                   {formatINR(cart.subtotalPaise)}
                 </span>
               </div>
               <Dialog.Close asChild>
                 <Link
                   href="/checkout"
-                  className="w-full rounded-none bg-primary py-4 font-label-caps text-[11px] tracking-[0.12em] text-on-primary uppercase flex items-center justify-center hover:bg-primary/90 transition-colors"
+                  className="w-full rounded-none bg-primary py-4 font-label-caps text-[11px] tracking-[0.12em] text-on-primary uppercase flex items-center justify-center hover:bg-primary/90 transition-colors font-semibold"
                 >
                   Checkout
                 </Link>
@@ -210,7 +183,7 @@ export function CartDrawer() {
               <Dialog.Close asChild>
                 <Link
                   href="/cart"
-                  className="w-full py-2 font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest flex items-center justify-center hover:text-primary transition-colors"
+                  className="w-full py-2 font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest flex items-center justify-center hover:text-primary transition-colors font-semibold"
                 >
                   View full bag
                 </Link>

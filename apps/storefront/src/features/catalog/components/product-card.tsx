@@ -11,7 +11,7 @@ import { WishlistButton } from "@/features/wishlist/components/wishlist-button";
 
 interface ProductCardProps {
   product: Product;
-  cart: Cart;
+  cart?: Cart;
   className?: string;
 }
 

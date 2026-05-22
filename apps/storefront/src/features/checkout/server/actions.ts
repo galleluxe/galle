@@ -22,6 +22,8 @@ interface OrderInput {
   province: string;
   razorpayPaymentId?: string;
   razorpayOrderId?: string;
+  isGift?: boolean;
+  giftMessage?: string;
 }
 
 export async function prepareCheckoutAction() {
@@ -86,6 +88,8 @@ export async function completeOrderAction(input: OrderInput) {
       razorpayPaymentId: input.razorpayPaymentId,
       razorpayOrderId: input.razorpayOrderId,
       lines: resolved.lines,
+      isGift: input.isGift ?? false,
+      giftMessage: input.giftMessage ?? "",
       shippingAddress: {
         firstName: input.firstName,
         lastName: input.lastName,

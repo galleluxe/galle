@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface ProductCarouselRowProps {
   products: Product[];
-  cart: Cart;
+  cart?: Cart;
   centerOnDesktop?: boolean;
 }
 
@@ -15,7 +15,7 @@ export function ProductCarouselRow({ products, cart, centerOnDesktop = false }: 
   return (
     <div className="-mx-margin-mobile md:-mx-margin-desktop px-margin-mobile md:px-margin-desktop">
       <div className={cn(
-        "flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [scrollbar-width:thin]",
+        "flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth hide-scrollbar",
         centerOnDesktop && "md:justify-center"
       )}>
         {products.map((product) => (
