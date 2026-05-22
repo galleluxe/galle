@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { BodyText, Headline } from "@/components/typography/display";
 import { HeroCarousel } from "@/features/home/components/hero-carousel";
 import { ProductCarouselRow } from "@/features/home/components/product-carousel-row";
-import { ProductCard } from "@/features/catalog/components/product-card";
-import { ProductGrid } from "@/features/catalog/components/product-grid";
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
 import { HomeReviewsSection } from "@/components/reviews/product-reviews";
 import { listProducts } from "@/lib/catalog";
@@ -104,7 +102,7 @@ export default async function HomePage() {
               Curated signatures from the maison.
             </BodyText>
           </div>
-          <ProductCarouselRow products={featured} cart={cart} centerOnDesktop />
+          <ProductCarouselRow products={featured} centerOnDesktop />
         </PageShell>
       </section>
 
@@ -113,7 +111,7 @@ export default async function HomePage() {
           <div className="text-center mb-12">
             <Headline size="sm">The Collection</Headline>
           </div>
-          <ProductCarouselRow products={collection} cart={cart} />
+          <ProductCarouselRow products={collection} />
           <div className="text-center mt-12">
             <Button asChild variant="ghost">
               <Link href="/shop">View All</Link>
