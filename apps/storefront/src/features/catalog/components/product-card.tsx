@@ -23,7 +23,7 @@ export function ProductCard({ product, cart, className }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "flex flex-col overflow-hidden rounded-lg border-2 border-primary bg-surface-container-lowest shadow-[0_4px_24px_rgba(124,44,46,0.06)]",
+        "flex flex-col overflow-hidden rounded-lg border-1 border-primary bg-surface-container-lowest shadow-[0_4px_24px_rgba(124,44,46,0.06)]",
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function ProductCard({ product, cart, className }: ProductCardProps) {
 
       <div className="flex flex-col gap-4 p-5 md:p-6">
         <Link href={`/shop/${product.handle}`} className="hover:text-secondary transition-colors">
-          <Headline size="sm" className="text-on-surface">
+          <Headline size="sm" className="text-on-surface text-[26px] md:text-[28px] leading-snug">
             {product.title}
           </Headline>
         </Link>
