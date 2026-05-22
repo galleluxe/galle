@@ -64,7 +64,7 @@ export function MobileMenu() {
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "font-label-caps text-label-caps font-semibold tracking-[0.2em] py-4 border-b border-outline-variant/15 transition-colors",
+                  "font-label-caps text-label-caps uppercase font-semibold tracking-wide py-4 border-b border-outline-variant/15 transition-colors",
                   pathname.startsWith(link.href)
                     ? "text-primary"
                     : "text-outline hover:text-secondary",

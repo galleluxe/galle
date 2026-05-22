@@ -23,7 +23,7 @@ export function NavLinks() {
             key={link.href}
             href={link.href}
             className={cn(
-              "font-label-caps text-label-caps font-semibold tracking-[0.2em] transition-colors duration-300 relative py-1",
+              "font-label-caps text-label-caps uppercase font-semibold tracking-wide transition-colors duration-300 relative py-1",
               active
                 ? "text-primary after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-secondary"
                 : "text-outline hover:text-secondary",
