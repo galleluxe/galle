@@ -66,7 +66,7 @@ export async function GET(
             style={{
               fontSize: 64,
               fontWeight: 400,
-              color: "#6f5959",
+              color: "#7c2c2e",
               lineHeight: 1.1,
               margin: 0,
             }}

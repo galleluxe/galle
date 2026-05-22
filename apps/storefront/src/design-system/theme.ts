@@ -1,6 +1,6 @@
 export const colors = {
   surface: "#faf9f5",
-  primary: "#6f5959",
+  primary: "#7c2c2e",
   secondary: "#735c00",
   tertiary: "#805253",
   onSurface: "#1b1c1a",

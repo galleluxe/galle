@@ -124,7 +124,7 @@ export function CheckoutForm({ cart }: CheckoutFormProps) {
           email: form.email,
           contact: form.phone,
         },
-        theme: { color: "#6F5959" },
+        theme: { color: "#7C2C2E" },
         handler: (response) => {
           void finishOrder(
             response.razorpay_payment_id,

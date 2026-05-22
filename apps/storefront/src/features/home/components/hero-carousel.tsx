@@ -69,9 +69,16 @@ export function HeroCarousel({ products }: HeroCarouselProps) {
       onTouchEnd={handleTouchEnd}
     >
       <div className="text-center md:text-left space-y-6 md:space-y-8 order-2 md:order-1">
-        <Eyebrow className="text-[10px] md:text-xs">The New Signature</Eyebrow>
-        <Display className="text-balance text-[28px] sm:text-[36px] md:text-display-lg leading-tight">Whispers of Grace</Display>
-        <BodyText size="lg" className="max-w-md mx-auto md:mx-0 text-sm md:text-base min-h-[3.5rem] md:min-h-[4.5rem] transition-opacity duration-500">
+        <Eyebrow className="text-primary text-[10px] md:text-xs tracking-[0.22em] font-medium">
+          The New Signature
+        </Eyebrow>
+        <Display className="text-balance text-[28px] sm:text-[36px] md:text-display-lg leading-[1.05] tracking-[-0.03em] text-[#1d1d1f] font-normal">
+          Whispers of Grace
+        </Display>
+        <BodyText
+          size="lg"
+          className="max-w-md mx-auto md:mx-0 text-sm md:text-base min-h-[3.5rem] md:min-h-[4.5rem] transition-opacity duration-500 text-on-surface-variant/90 leading-relaxed font-normal"
+        >
           {active.description}
         </BodyText>
         <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">

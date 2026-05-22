@@ -10,7 +10,7 @@ export function CartButton() {
     <button
       type="button"
       onClick={open}
-      className="text-on-surface-variant hover:text-primary transition-colors relative"
+      className="text-primary hover:text-primary/80 transition-colors relative"
       aria-label={`Open bag, ${count} items`}
     >
       <span className="material-symbols-outlined text-2xl">shopping_bag</span>

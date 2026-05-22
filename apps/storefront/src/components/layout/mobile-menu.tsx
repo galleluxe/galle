@@ -31,7 +31,7 @@ export function MobileMenu() {
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="text-outline hover:opacity-70 transition-opacity md:hidden"
+        className="text-primary hover:text-primary/80 transition-colors md:hidden"
       >
         <span className="material-symbols-outlined text-2xl">
           {open ? "close" : "menu"}
@@ -67,7 +67,7 @@ export function MobileMenu() {
                   "font-label-caps text-label-caps uppercase font-semibold tracking-wide py-4 border-b border-outline-variant/15 transition-colors",
                   pathname.startsWith(link.href)
                     ? "text-primary"
-                    : "text-outline hover:text-secondary",
+                    : "text-primary/75 hover:text-primary",
                 )}
               >
                 {link.label}

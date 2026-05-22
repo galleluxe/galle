@@ -54,7 +54,7 @@ export function SearchButton() {
         <button
           type="button"
           aria-label="Search"
-          className="text-outline hover:opacity-70 transition-opacity flex items-center justify-center p-2 focus:outline-none"
+          className="text-primary hover:text-primary/80 transition-colors flex items-center justify-center p-2 focus:outline-none"
         >
           <span className="material-symbols-outlined text-2xl">search</span>
         </button>
