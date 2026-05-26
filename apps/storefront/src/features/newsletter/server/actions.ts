@@ -21,10 +21,10 @@ export async function subscribeNewsletter(
   const { email } = parsed.data;
 
   if (!isDbConfigured()) {
-    console.log(`[newsletter] Subscription from ${email} (DB not configured)`);
+    console.error("[newsletter] DATABASE_URL is not set — submission not saved");
     return {
-      success: true,
-      message: "You're on the list. Expect whispers soon.",
+      success: false,
+      message: "Newsletter is temporarily unavailable. Please try again later.",
     };
   }
 

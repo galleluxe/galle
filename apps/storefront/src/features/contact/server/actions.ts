@@ -29,8 +29,11 @@ export async function sendContactMessage(
   const { name, email, message } = parsed.data;
 
   if (!isDbConfigured()) {
-    console.log(`[contact] Message from ${name} <${email}>: ${message}`);
-    return { success: true, message: "Thank you. We will respond within 2 business days." };
+    console.error("[contact] DATABASE_URL is not set — message not saved");
+    return {
+      success: false,
+      message: "Contact form is temporarily unavailable. Please try again later.",
+    };
   }
 
   try {

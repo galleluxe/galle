@@ -72,6 +72,10 @@ export const Products: CollectionConfig = {
       name: "featured",
       type: "checkbox",
       defaultValue: false,
+      admin: {
+        description:
+          "Show on homepage under “Discover Our Iconics & Best Sellers”. You can feature as many products as you like.",
+      },
     },
     {
       name: "bentoSize",

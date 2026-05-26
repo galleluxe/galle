@@ -93,8 +93,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    homepage: Homepage;
+  };
+  globalsSelect: {
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -175,6 +179,9 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Show on homepage under “Discover Our Iconics & Best Sellers”. You can feature as many products as you like.
+   */
   featured?: boolean | null;
   bentoSize?: ('standard' | 'large') | null;
   /**
@@ -537,6 +544,66 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  /**
+   * Full-width homepage banners. Add separate ImageKit URLs for desktop (wide) and mobile (tall). Slides advance every 2 seconds.
+   */
+  heroSlides?:
+    | {
+        /**
+         * Wide banner for md+ screens
+         */
+        desktopImageUrl: string;
+        /**
+         * Tall banner for phones
+         */
+        mobileImageUrl: string;
+        alt?: string | null;
+        /**
+         * Small line above headline (optional)
+         */
+        eyebrow?: string | null;
+        /**
+         * Main headline overlay (optional)
+         */
+        headline?: string | null;
+        ctaLabel?: string | null;
+        /**
+         * e.g. /shop or /shop/entice
+         */
+        linkUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  heroSlides?:
+    | T
+    | {
+        desktopImageUrl?: T;
+        mobileImageUrl?: T;
+        alt?: T;
+        eyebrow?: T;
+        headline?: T;
+        ctaLabel?: T;
+        linkUrl?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

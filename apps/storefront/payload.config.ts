@@ -7,6 +7,7 @@ import { Products } from "./src/collections/Products";
 import { ProductVariants } from "./src/collections/ProductVariants";
 import { Orders } from "./src/collections/Orders";
 import { Signups } from "./src/collections/Signups";
+import { Homepage } from "./src/globals/Homepage";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -20,6 +21,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Products, ProductVariants, Orders, Signups],
+  globals: [Homepage],
   typescript: {
     outputFile: path.resolve(dirname, "src/payload-types.ts"),
   },

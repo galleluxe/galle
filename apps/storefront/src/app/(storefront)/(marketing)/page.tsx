@@ -7,6 +7,7 @@ import { ProductCarouselRow } from "@/features/home/components/product-carousel-
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
 import { HomeReviewsSection } from "@/components/reviews/product-reviews";
 import { listProducts } from "@/lib/catalog";
+import { getHomeHeroSlides } from "@/lib/homepage";
 import { getAllPosts } from "@/lib/journal";
 
 export const revalidate = 600;
@@ -14,18 +15,24 @@ export const revalidate = 600;
 const FAMILIES = ["Floral", "Woody", "Fresh", "Oriental"] as const;
 
 export default async function HomePage() {
-  const products = await listProducts();
-  const journalPosts = getAllPosts().slice(0, 2);
-  const collection = products.slice(0, 5);
-  const featured = products.slice(0, 2);
+  const [products, heroSlides, journalPosts] = await Promise.all([
+    listProducts(),
+    getHomeHeroSlides(),
+    Promise.resolve(getAllPosts().slice(0, 2)),
+  ]);
+
+  const featured = products.filter((p) => p.featured);
+  const collection = products;
 
   return (
     <>
-      <section className="mb-8 md:mb-section-gap">
-        <PageShell>
-          <HeroCarousel products={products} />
-        </PageShell>
-      </section>
+      {heroSlides.length > 0 && (
+        <section className="mb-8 md:mb-section-gap w-full">
+          <div className="w-full px-0 md:px-margin-desktop md:max-w-container-max md:mx-auto">
+            <HeroCarousel slides={heroSlides} />
+          </div>
+        </section>
+      )}
 
       <section className="mb-12 md:mb-section-gap border-y border-outline-variant/30 py-10 md:py-16 overflow-hidden">
         <PageShell>
@@ -97,12 +104,12 @@ export default async function HomePage() {
       <section className="mb-12 md:mb-section-gap">
         <PageShell>
           <div className="text-center mb-12">
-            <Headline size="sm">Featured</Headline>
+            <Headline size="sm">Discover Our Iconics &amp; Best Sellers</Headline>
             <BodyText className="mt-4 max-w-xl mx-auto">
-              Curated signatures from the maison.
+              Curated signatures from the maison. Mark products as Featured in the admin to add them here.
             </BodyText>
           </div>
-          <ProductCarouselRow products={featured} centerOnDesktop />
+          <ProductCarouselRow products={featured} />
         </PageShell>
       </section>
 
