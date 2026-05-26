@@ -44,70 +44,6 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
-      <section className="mb-12 md:mb-section-gap">
-        <PageShell>
-          <div className="text-center mb-12">
-            <Headline size="sm">Discover Our Iconics &amp; Best Sellers</Headline>
-            <BodyText className="mt-4 max-w-xl mx-auto">
-              Curated signatures from the maison. Mark products as Featured in the admin to add them here.
-            </BodyText>
-          </div>
-          <ProductCarouselRow products={featured} centerOnDesktop />
-        </PageShell>
-      </section>
-
-      <section className="mb-12 md:mb-section-gap">
-        <PageShell>
-          <div className="text-center mb-12">
-            <Headline size="sm">{homepage.launchSectionTitle}</Headline>
-            <BodyText className="mt-4 max-w-xl mx-auto">
-              The latest expressions from the atelier. Choose up to five products under Globals → Homepage → New Launch.
-            </BodyText>
-          </div>
-          <ProductCarouselRow products={launch} intervalMs={3000} centerOnDesktop />
-        </PageShell>
-      </section>
-
-      <section className="mb-12 md:mb-section-gap">
-        <PageShell>
-          <div className="text-center mb-12">
-            <Headline size="sm">The Collection</Headline>
-          </div>
-          <ProductCarouselRow products={collection} />
-          <div className="text-center mt-12">
-            <Button asChild variant="ghost">
-              <Link href="/shop">View All</Link>
-            </Button>
-          </div>
-        </PageShell>
-      </section>
-
-      <section className="mb-12 md:mb-section-gap">
-        <PageShell>
-          <div className="text-center mb-12">
-            <Headline size="sm">{homepage.giftingSectionTitle}</Headline>
-            {homepage.giftingSectionSubtitle ? (
-              <BodyText className="mt-4 max-w-xl mx-auto">
-                {homepage.giftingSectionSubtitle}
-              </BodyText>
-            ) : (
-              <BodyText className="mt-4 max-w-xl mx-auto">
-                Thoughtful pairings and gift sets for someone special.
-              </BodyText>
-            )}
-          </div>
-          <ProductCarouselRow products={gifting} intervalMs={1500} />
-          <div className="text-center mt-12 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild variant="primary">
-              <Link href="/gifting">Send a Gift</Link>
-            </Button>
-            <Button asChild variant="ghost">
-              <Link href="/shop">Shop Combos</Link>
-            </Button>
-          </div>
-        </PageShell>
-      </section>
-
       <section className="mb-12 md:mb-section-gap border-y border-outline-variant/30 py-10 md:py-16 overflow-hidden">
         <PageShell>
           <div className="flex gap-6 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth hide-scrollbar md:grid md:grid-cols-5 md:pb-0">
@@ -175,6 +111,71 @@ export default async function HomePage() {
         </PageShell>
       </section>
 
+      <section className="mb-12 md:mb-section-gap">
+        <PageShell>
+          <div className="text-center mb-12">
+            <Headline size="sm">Discover Our Iconics &amp; Best Sellers</Headline>
+            <BodyText className="mt-4 max-w-xl mx-auto">
+              Curated signatures from the maison. Mark products as Featured in the admin to add them here.
+            </BodyText>
+          </div>
+          <ProductCarouselRow products={featured} centerOnDesktop />
+        </PageShell>
+      </section>
+
+      <section className="mb-12 md:mb-section-gap">
+        <PageShell>
+          <div className="text-center mb-12">
+            <Headline size="sm">{homepage.launchSectionTitle}</Headline>
+            <BodyText className="mt-4 max-w-xl mx-auto">
+              The latest expressions from the atelier. Choose up to five products under Globals → Homepage → New Launch.
+            </BodyText>
+          </div>
+          <ProductCarouselRow products={launch} intervalMs={3000} centerOnDesktop />
+        </PageShell>
+      </section>
+
+      <section className="mb-12 md:mb-section-gap">
+        <PageShell>
+          <div className="text-center mb-12">
+            <Headline size="sm">The Collection</Headline>
+          </div>
+          <ProductCarouselRow products={collection} />
+          <div className="text-center mt-12">
+            <Button asChild variant="ghost">
+              <Link href="/shop">View All</Link>
+            </Button>
+          </div>
+        </PageShell>
+      </section>
+
+      <section className="mb-12 md:mb-section-gap">
+        <PageShell>
+          <div className="text-center mb-12">
+            <Headline size="sm">{homepage.giftingSectionTitle}</Headline>
+            {homepage.giftingSectionSubtitle ? (
+              <BodyText className="mt-4 max-w-xl mx-auto">
+                {homepage.giftingSectionSubtitle}
+              </BodyText>
+            ) : (
+              <BodyText className="mt-4 max-w-xl mx-auto">
+                Thoughtful pairings and gift sets for someone special.
+              </BodyText>
+            )}
+          </div>
+          <ProductCarouselRow products={gifting} intervalMs={1500} />
+          <div className="text-center mt-12 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild variant="primary">
+              <Link href="/gifting">Send a Gift</Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link href="/shop">Shop Combos</Link>
+            </Button>
+          </div>
+        </PageShell>
+      </section>
+
+      
       <section className="mb-12 md:mb-section-gap">
         <PageShell>
           <div className="text-center mb-12">
