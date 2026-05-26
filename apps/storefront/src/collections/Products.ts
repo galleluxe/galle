@@ -74,7 +74,7 @@ export const Products: CollectionConfig = {
       defaultValue: false,
       admin: {
         description:
-          "Show on homepage under “Discover Our Iconics & Best Sellers”. You can feature as many products as you like.",
+          'Show on homepage under "Discover Our Iconics & Best Sellers". You can feature as many products as you like.',
       },
     },
     {

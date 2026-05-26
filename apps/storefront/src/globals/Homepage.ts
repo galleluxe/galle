@@ -18,11 +18,11 @@ export const Homepage: GlobalConfig = {
   fields: [
     {
       name: "heroSlides",
-      label: "Hero carousel",
+      label: "Promo banner carousel",
       type: "array",
       admin: {
         description:
-          "Full-width homepage banners. Add separate ImageKit URLs for desktop (wide) and mobile (tall). Slides advance every 2 seconds.",
+          "Full-width homepage banners below the product hero. Add separate ImageKit URLs for desktop (wide) and mobile (tall). Slides advance every 2 seconds.",
       },
       fields: [
         {

@@ -3,6 +3,7 @@ import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
 import { BodyText, Headline } from "@/components/typography/display";
 import { HeroCarousel } from "@/features/home/components/hero-carousel";
+import { PromoBannerCarousel } from "@/features/home/components/promo-banner-carousel";
 import { ProductCarouselRow } from "@/features/home/components/product-carousel-row";
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
 import { HomeReviewsSection } from "@/components/reviews/product-reviews";
@@ -15,7 +16,7 @@ export const revalidate = 600;
 const FAMILIES = ["Floral", "Woody", "Fresh", "Oriental"] as const;
 
 export default async function HomePage() {
-  const [products, heroSlides, journalPosts] = await Promise.all([
+  const [products, promoSlides, journalPosts] = await Promise.all([
     listProducts(),
     getHomeHeroSlides(),
     Promise.resolve(getAllPosts().slice(0, 2)),
@@ -26,10 +27,16 @@ export default async function HomePage() {
 
   return (
     <>
-      {heroSlides.length > 0 && (
+      <section className="mb-8 md:mb-section-gap">
+        <PageShell>
+          <HeroCarousel products={products} />
+        </PageShell>
+      </section>
+
+      {promoSlides.length > 0 && (
         <section className="mb-8 md:mb-section-gap w-full">
           <div className="w-full px-0 md:px-margin-desktop md:max-w-container-max md:mx-auto">
-            <HeroCarousel slides={heroSlides} />
+            <PromoBannerCarousel slides={promoSlides} />
           </div>
         </section>
       )}
@@ -109,7 +116,7 @@ export default async function HomePage() {
               Curated signatures from the maison. Mark products as Featured in the admin to add them here.
             </BodyText>
           </div>
-          <ProductCarouselRow products={featured} />
+          <ProductCarouselRow products={featured} centerOnDesktop />
         </PageShell>
       </section>
 
@@ -157,8 +164,6 @@ export default async function HomePage() {
           </div>
         </PageShell>
       </section>
-
-
 
       <section className="mb-12 md:mb-section-gap">
         <PageShell>

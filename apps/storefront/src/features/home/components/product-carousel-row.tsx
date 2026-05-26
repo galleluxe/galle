@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import type { Cart, Product } from "@/lib/catalog/types";
 import { cn } from "@/lib/utils";
@@ -10,17 +10,36 @@ const INTERVAL_MS = 1500;
 interface ProductCarouselRowProps {
   products: Product[];
   cart?: Cart;
+  centerOnDesktop?: boolean;
 }
 
-/** Auto-advancing carousel — one perfume visible at a time, advances every 1.5s. */
-export function ProductCarouselRow({ products, cart }: ProductCarouselRowProps) {
-  const [index, setIndex] = useState(0);
+/** Horizontal row of product cards that auto-scrolls every 1.5s (all cards stay in the track). */
+export function ProductCarouselRow({
+  products,
+  cart,
+  centerOnDesktop = false,
+}: ProductCarouselRowProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (products.length <= 1) return;
+    const el = scrollRef.current;
+    if (!el || products.length <= 1) return;
+
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % products.length);
+      const firstCard = el.querySelector<HTMLElement>("[data-carousel-card]");
+      const gap = 24;
+      const step = (firstCard?.offsetWidth ?? 280) + gap;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+
+      if (maxScroll <= 0) return;
+
+      if (el.scrollLeft >= maxScroll - 4) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: step, behavior: "smooth" });
+      }
     }, INTERVAL_MS);
+
     return () => window.clearInterval(id);
   }, [products.length]);
 
@@ -33,36 +52,24 @@ export function ProductCarouselRow({ products, cart }: ProductCarouselRowProps) 
   }
 
   return (
-    <div className="mx-auto w-full max-w-sm md:max-w-md">
-      <div className="relative overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-out"
-          style={{ transform: `translateX(-${index * 100}%)` }}
-        >
-          {products.map((product) => (
-            <div key={product.id} className="w-full shrink-0">
-              <ProductCard product={product} cart={cart} className="h-full" />
-            </div>
-          ))}
-        </div>
+    <div className="-mx-margin-mobile md:-mx-margin-desktop px-margin-mobile md:px-margin-desktop">
+      <div
+        ref={scrollRef}
+        className={cn(
+          "flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth hide-scrollbar",
+          centerOnDesktop && "md:justify-center",
+        )}
+      >
+        {products.map((product) => (
+          <div
+            key={product.id}
+            data-carousel-card
+            className="w-[min(85vw,280px)] shrink-0 snap-start md:w-[min(32vw,320px)]"
+          >
+            <ProductCard product={product} cart={cart} className="h-full" />
+          </div>
+        ))}
       </div>
-
-      {products.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-6">
-          {products.map((product, i) => (
-            <button
-              key={product.id}
-              type="button"
-              aria-label={`Show ${product.title}`}
-              onClick={() => setIndex(i)}
-              className={cn(
-                "h-1 rounded-full transition-all duration-300",
-                i === index ? "w-6 bg-primary" : "w-2 bg-outline-variant/50",
-              )}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
