@@ -8,6 +8,7 @@ import { ProductVariants } from "./src/collections/ProductVariants";
 import { Orders } from "./src/collections/Orders";
 import { Signups } from "./src/collections/Signups";
 import { Homepage } from "./src/globals/Homepage";
+import { migrations } from "./src/migrations/index";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -30,6 +31,8 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || "",
       max: process.env.VERCEL ? 3 : 10,
     },
+    migrationDir: path.resolve(dirname, "src/migrations"),
+    prodMigrations: migrations,
     push:
       process.env.PAYLOAD_DISABLE_PUSH === "true"
         ? false

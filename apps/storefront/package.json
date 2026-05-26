@@ -8,6 +8,8 @@
     "check:env": "node scripts/check-env.mjs",
     "db:check": "node scripts/check-db-data.mjs",
     "db:ensure": "node scripts/ensure-drizzle-schema.mjs && node scripts/ensure-bundle-schema.mjs",
+    "db:ensure-homepage": "node scripts/ensure-homepage-global.mjs",
+    "migrate": "payload migrate",
     "payload": "payload",
     "seed:catalog": "payload run scripts/seed-catalog.ts",
     "generate:types": "payload generate:types",
