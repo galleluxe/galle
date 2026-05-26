@@ -36,6 +36,16 @@ if (!connectionString) {
 
 const sql = postgres(connectionString, { ssl: "require", max: 1 });
 
+// Remove dev-mode markers (batch = -1) to prevent interactive prompts blocking CI/Vercel builds
+try {
+  const deleted = await sql`DELETE FROM payload_migrations WHERE batch = -1`;
+  if (deleted.count > 0) {
+    console.log(`Cleared ${deleted.count} dev-mode migration marker(s) to prevent interactive prompts.`);
+  }
+} catch (error) {
+  // If payload_migrations doesn't exist yet, ignore
+}
+
 await sql`
   CREATE TABLE IF NOT EXISTS homepage (
     id serial PRIMARY KEY NOT NULL,
