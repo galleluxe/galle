@@ -12,7 +12,24 @@ export interface HeroSlide {
   linkUrl?: string;
 }
 
-async function fetchHomeHeroSlides(): Promise<HeroSlide[]> {
+export interface HomepageContent {
+  heroSlides: HeroSlide[];
+  launchSectionTitle: string;
+  launchProductIds: string[];
+  giftingSectionTitle: string;
+  giftingSectionSubtitle?: string;
+  giftingProductIds: string[];
+}
+
+function relId(entry: unknown): string | null {
+  if (entry == null) return null;
+  if (typeof entry === "object" && entry !== null && "id" in entry) {
+    return String((entry as { id: unknown }).id);
+  }
+  return String(entry);
+}
+
+async function fetchHomepageContent(): Promise<HomepageContent> {
   const payload = await getPayloadClient();
   const global = await payload.findGlobal({
     slug: "homepage",
@@ -29,7 +46,7 @@ async function fetchHomeHeroSlides(): Promise<HeroSlide[]> {
     linkUrl?: string | null;
   }>;
 
-  return raw
+  const heroSlides = raw
     .filter((s) => s.desktopImageUrl && s.mobileImageUrl)
     .map((s) => ({
       desktopImageUrl: resolveProductImageUrl(s.desktopImageUrl),
@@ -40,19 +57,57 @@ async function fetchHomeHeroSlides(): Promise<HeroSlide[]> {
       ctaLabel: s.ctaLabel ?? undefined,
       linkUrl: s.linkUrl ?? undefined,
     }));
+
+  const launchRaw = (global as { launchProducts?: unknown }).launchProducts;
+  const giftingRaw = (global as { giftingProducts?: unknown }).giftingProducts;
+
+  const launchProductIds = (Array.isArray(launchRaw) ? launchRaw : [])
+    .map(relId)
+    .filter((id): id is string => Boolean(id));
+
+  const giftingProductIds = (Array.isArray(giftingRaw) ? giftingRaw : [])
+    .map(relId)
+    .filter((id): id is string => Boolean(id));
+
+  return {
+    heroSlides,
+    launchSectionTitle:
+      String((global as { launchSectionTitle?: string }).launchSectionTitle ?? "") ||
+      "New Launch",
+    launchProductIds,
+    giftingSectionTitle:
+      String((global as { giftingSectionTitle?: string }).giftingSectionTitle ?? "") ||
+      "Gifting",
+    giftingSectionSubtitle:
+      (global as { giftingSectionSubtitle?: string | null }).giftingSectionSubtitle ??
+      undefined,
+    giftingProductIds,
+  };
 }
 
-export const getCachedHomeHeroSlides = unstable_cache(
-  fetchHomeHeroSlides,
-  ["homepage-hero-slides"],
+export const getCachedHomepageContent = unstable_cache(
+  fetchHomepageContent,
+  ["homepage-content-v2"],
   { tags: ["homepage", "shop"], revalidate: 3600 },
 );
 
-export async function getHomeHeroSlides(): Promise<HeroSlide[]> {
+export async function getHomepageContent(): Promise<HomepageContent> {
   try {
-    return await getCachedHomeHeroSlides();
+    return await getCachedHomepageContent();
   } catch (error) {
-    console.error("[homepage] getHomeHeroSlides error:", error);
-    return [];
+    console.error("[homepage] getHomepageContent error:", error);
+    return {
+      heroSlides: [],
+      launchSectionTitle: "New Launch",
+      launchProductIds: [],
+      giftingSectionTitle: "Gifting",
+      giftingProductIds: [],
+    };
   }
+}
+
+/** @deprecated Use getHomepageContent().heroSlides */
+export async function getHomeHeroSlides(): Promise<HeroSlide[]> {
+  const content = await getHomepageContent();
+  return content.heroSlides;
 }

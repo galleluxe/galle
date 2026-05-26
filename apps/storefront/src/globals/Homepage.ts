@@ -22,7 +22,7 @@ export const Homepage: GlobalConfig = {
       type: "array",
       admin: {
         description:
-          "Full-width homepage banners below the product hero. Add separate ImageKit URLs for desktop (wide) and mobile (tall). Slides advance every 2 seconds.",
+          "Full-width banners directly under the navbar (desktop + mobile ImageKit URLs). Slides advance every 2 seconds.",
       },
       fields: [
         {
@@ -68,6 +68,56 @@ export const Homepage: GlobalConfig = {
           type: "text",
           label: "Button link",
           admin: { description: "e.g. /shop or /shop/entice" },
+        },
+      ],
+    },
+    {
+      type: "collapsible",
+      label: "New Launch section",
+      fields: [
+        {
+          name: "launchSectionTitle",
+          type: "text",
+          defaultValue: "New Launch",
+          label: "Section title",
+        },
+        {
+          name: "launchProducts",
+          type: "relationship",
+          relationTo: "products",
+          hasMany: true,
+          maxRows: 5,
+          admin: {
+            description:
+              "Pick 4–5 published perfumes for the New Launch carousel (auto-scrolls every 3 seconds).",
+          },
+        },
+      ],
+    },
+    {
+      type: "collapsible",
+      label: "Gifting section",
+      fields: [
+        {
+          name: "giftingSectionTitle",
+          type: "text",
+          defaultValue: "Gifting",
+          label: "Section title",
+        },
+        {
+          name: "giftingSectionSubtitle",
+          type: "textarea",
+          label: "Section subtitle",
+        },
+        {
+          name: "giftingProducts",
+          type: "relationship",
+          relationTo: "products",
+          hasMany: true,
+          admin: {
+            description:
+              "Combo / gift sets for the homepage gifting carousel (e.g. bundles with bundled products).",
+          },
         },
       ],
     },

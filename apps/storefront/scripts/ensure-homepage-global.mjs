@@ -39,8 +39,31 @@ const sql = postgres(connectionString, { ssl: "require", max: 1 });
 await sql`
   CREATE TABLE IF NOT EXISTS homepage (
     id serial PRIMARY KEY NOT NULL,
+    launch_section_title varchar DEFAULT 'New Launch',
+    gifting_section_title varchar DEFAULT 'Gifting',
+    gifting_section_subtitle varchar,
     updated_at timestamptz,
     created_at timestamptz
+  )
+`;
+
+await sql`
+  ALTER TABLE homepage ADD COLUMN IF NOT EXISTS launch_section_title varchar DEFAULT 'New Launch'
+`;
+await sql`
+  ALTER TABLE homepage ADD COLUMN IF NOT EXISTS gifting_section_title varchar DEFAULT 'Gifting'
+`;
+await sql`
+  ALTER TABLE homepage ADD COLUMN IF NOT EXISTS gifting_section_subtitle varchar
+`;
+
+await sql`
+  CREATE TABLE IF NOT EXISTS homepage_rels (
+    id serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    parent_id integer NOT NULL,
+    path varchar NOT NULL,
+    products_id integer
   )
 `;
 

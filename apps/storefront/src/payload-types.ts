@@ -180,7 +180,7 @@ export interface Product {
       }[]
     | null;
   /**
-   * Show on homepage under “Discover Our Iconics & Best Sellers”. You can feature as many products as you like.
+   * Show on homepage under "Discover Our Iconics & Best Sellers". You can feature as many products as you like.
    */
   featured?: boolean | null;
   bentoSize?: ('standard' | 'large') | null;
@@ -552,7 +552,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Homepage {
   id: number;
   /**
-   * Full-width homepage banners. Add separate ImageKit URLs for desktop (wide) and mobile (tall). Slides advance every 2 seconds.
+   * Full-width homepage banners below the product hero. Add separate ImageKit URLs for desktop (wide) and mobile (tall). Slides advance every 2 seconds.
    */
   heroSlides?:
     | {

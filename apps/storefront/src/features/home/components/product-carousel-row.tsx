@@ -5,12 +5,14 @@ import { ProductCard } from "@/features/catalog/components/product-card";
 import type { Cart, Product } from "@/lib/catalog/types";
 import { cn } from "@/lib/utils";
 
-const INTERVAL_MS = 1500;
+const DEFAULT_INTERVAL_MS = 1500;
 
 interface ProductCarouselRowProps {
   products: Product[];
   cart?: Cart;
   centerOnDesktop?: boolean;
+  /** Auto-scroll interval in ms (default 1500). */
+  intervalMs?: number;
 }
 
 /** Horizontal row of product cards that auto-scrolls every 1.5s (all cards stay in the track). */
@@ -18,6 +20,7 @@ export function ProductCarouselRow({
   products,
   cart,
   centerOnDesktop = false,
+  intervalMs = DEFAULT_INTERVAL_MS,
 }: ProductCarouselRowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -38,10 +41,10 @@ export function ProductCarouselRow({
       } else {
         el.scrollBy({ left: step, behavior: "smooth" });
       }
-    }, INTERVAL_MS);
+    }, intervalMs);
 
     return () => window.clearInterval(id);
-  }, [products.length]);
+  }, [products.length, intervalMs]);
 
   if (products.length === 0) {
     return (

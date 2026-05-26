@@ -14,7 +14,7 @@ interface PromoBannerCarouselProps {
   slides: HeroSlide[];
 }
 
-/** Full-width admin-managed banners (separate desktop / mobile images). */
+/** Full-bleed promo banners directly under the navbar (~75vh). */
 export function PromoBannerCarousel({ slides }: PromoBannerCarouselProps) {
   const [index, setIndex] = useState(0);
 
@@ -32,8 +32,8 @@ export function PromoBannerCarousel({ slides }: PromoBannerCarouselProps) {
   const hasCopy = Boolean(active.eyebrow || active.headline || active.ctaLabel);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-none md:rounded-xl">
-      <div className="relative aspect-[3/4] w-full md:aspect-[21/9] md:min-h-[320px] lg:min-h-[420px]">
+    <div className="relative w-full overflow-hidden">
+      <div className="relative h-[75vh] min-h-[70vh] max-h-[80vh] w-full">
         {slides.map((slide, i) => (
           <div
             key={`${slide.desktopImageUrl}-${i}`}
