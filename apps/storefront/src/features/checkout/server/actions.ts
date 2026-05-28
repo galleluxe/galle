@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { Resend } from "resend";
 import { createElement } from "react";
 import { OrderConfirmationEmail } from "@galle/emails";
+import { getResendFromAddress, sendResendEmail } from "@/lib/email/resend";
+import { createShiprocketOrder, paiseToRupees } from "@/lib/shiprocket/server";
 import { CART_DATA_COOKIE, getStoredCart } from "@/features/cart/server/store";
 import { resolveCartLines } from "@/lib/checkout/resolve-cart";
 import { createRazorpayOrder } from "@/lib/razorpay/server";
@@ -111,29 +112,59 @@ export async function completeOrderAction(input: OrderInput) {
     },
   });
 
-  const resendApiKey = process.env.RESEND_API_KEY;
   const totalAmountStr = formatINR(resolved.subtotalPaise);
 
-  if (resendApiKey && resendApiKey !== "re_stub12345") {
-    try {
-      const resend = new Resend(resendApiKey);
-      const from =
-        process.env.RESEND_FROM_EMAIL ?? "GALLE <onboarding@resend.dev>";
+  const emailResult = await sendResendEmail({
+    to: input.email,
+    subject: `Your GALLE order ${orderNumber} is confirmed`,
+    react: createElement(OrderConfirmationEmail, {
+      orderNumber,
+      customerName: `${input.firstName} ${input.lastName}`,
+      totalINR: totalAmountStr,
+    }),
+  });
 
-      await resend.emails.send({
-        from,
-        to: input.email,
-        subject: `Your GALLE order ${orderNumber} is confirmed`,
-        react: createElement(OrderConfirmationEmail, {
-          orderNumber,
-          customerName: `${input.firstName} ${input.lastName}`,
-          totalINR: totalAmountStr,
-        }),
-      });
-    } catch (emailError) {
-      console.error("Error sending email via Resend:", emailError);
-    }
+  if (!emailResult.ok && !emailResult.skipped) {
+    console.error(
+      `[checkout] Order ${orderNumber} saved but confirmation email failed for ${input.email} (from ${getResendFromAddress()}):`,
+      emailResult.error,
+    );
   }
+
+  const notifyTo = process.env.RESEND_ORDER_NOTIFY_EMAIL?.trim();
+  if (notifyTo) {
+    await sendResendEmail({
+      to: notifyTo,
+      subject: `[GALLE] New order ${orderNumber}`,
+      text: `Order ${orderNumber}\nCustomer: ${input.firstName} ${input.lastName}\nEmail: ${input.email}\nTotal: ${totalAmountStr}`,
+    });
+  }
+
+  // Push order to Shiprocket (non-blocking — failure does NOT stop checkout)
+  const orderDate = new Date()
+    .toISOString()
+    .slice(0, 16)
+    .replace("T", " ");
+
+  void createShiprocketOrder({
+    orderNumber,
+    orderDate,
+    firstName: input.firstName,
+    lastName: input.lastName,
+    email: input.email,
+    phone: input.phone,
+    address: input.address,
+    city: input.city,
+    postalCode: input.postalCode,
+    state: input.province,
+    subtotalRupees: paiseToRupees(resolved.subtotalPaise),
+    items: resolved.lines.map((line) => ({
+      name: `${line.productTitle} - ${line.variantTitle}`,
+      sku: line.sku,
+      units: line.quantity,
+      selling_price: paiseToRupees(line.unitPricePaise),
+    })),
+  });
 
   jar.delete(CART_DATA_COOKIE);
   revalidatePath("/", "layout");

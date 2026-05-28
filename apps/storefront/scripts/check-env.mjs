@@ -28,10 +28,13 @@ const checks = [
   ["DATABASE_URL", "Neon Postgres (Payload + Drizzle)"],
   ["NEXT_PUBLIC_IMAGEKIT_ENDPOINT", "ImageKit CDN"],
   ["RESEND_API_KEY", "Resend email"],
+  ["RESEND_FROM_EMAIL", "Resend sender (verify domain in Resend dashboard)"],
   ["NEXT_PUBLIC_RAZORPAY_KEY_ID", "Razorpay checkout (public)"],
   ["RAZORPAY_KEY_ID", "Razorpay server"],
   ["RAZORPAY_KEY_SECRET", "Razorpay server secret"],
   ["REVALIDATE_SECRET", "ISR cache bust"],
+  ["SHIPROCKET_EMAIL", "Shiprocket API user email"],
+  ["SHIPROCKET_PASSWORD", "Shiprocket API password"],
 ];
 
 const env = loadEnv(envPath);

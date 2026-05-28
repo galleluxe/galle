@@ -36,17 +36,12 @@ export async function subscribeNewsletter(
       .values({ email })
       .onConflictDoNothing();
 
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    if (RESEND_API_KEY) {
-      const { Resend } = await import("resend");
-      const resend = new Resend(RESEND_API_KEY);
-      await resend.emails.send({
-        from: "GALLE <hello@galle.com>",
-        to: email,
-        subject: "Welcome to the GALLE atelier",
-        text: `Welcome! You will be the first to know about new launches and scent stories.\n\n— Maison GALLE`,
-      });
-    }
+    const { sendResendEmail } = await import("@/lib/email/resend");
+    await sendResendEmail({
+      to: email,
+      subject: "Welcome to the GALLE atelier",
+      text: `Welcome! You will be the first to know about new launches and scent stories.\n\n— Maison GALLE`,
+    });
 
     return {
       success: true,
@@ -110,22 +105,12 @@ export async function vipSignupAction(input: {
       },
     });
 
-    // Send a beautiful confirmation email via Resend
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    if (RESEND_API_KEY && RESEND_API_KEY !== "re_stub12345") {
-      try {
-        const { Resend } = await import("resend");
-        const resend = new Resend(RESEND_API_KEY);
-        await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL ?? "GALLE <hello@galleluxe.com>",
-          to: parsed.data.email,
-          subject: "Welcome to the Maison GALLE Club",
-          text: `Dear ${parsed.data.name},\n\nThank you for registering. You have joined the Maison Club, unlocking complimentary luxury samples with your first order.\n\nWarmest regards,\nMaison GALLE`,
-        });
-      } catch (e) {
-        console.error("Resend error in VIP signup:", e);
-      }
-    }
+    const { sendResendEmail } = await import("@/lib/email/resend");
+    await sendResendEmail({
+      to: parsed.data.email,
+      subject: "Welcome to the Maison GALLE Club",
+      text: `Dear ${parsed.data.name},\n\nThank you for registering. You have joined the Maison Club, unlocking complimentary luxury samples with your first order.\n\nWarmest regards,\nMaison GALLE`,
+    });
 
     return {
       success: true,

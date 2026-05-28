@@ -41,19 +41,19 @@ export async function sendContactMessage(
     if (!db) throw new Error("no db");
     await db.insert(contactMessages).values({ name, email, message });
 
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    if (RESEND_API_KEY) {
-      const { Resend } = await import("resend");
-      const resend = new Resend(RESEND_API_KEY);
+    const { isResendConfigured, sendResendEmail } = await import("@/lib/email/resend");
+    const inbox =
+      process.env.CONTACT_INBOX_EMAIL?.trim() ||
+      process.env.RESEND_ORDER_NOTIFY_EMAIL?.trim();
+
+    if (isResendConfigured() && inbox) {
       await Promise.all([
-        resend.emails.send({
-          from: "GALLE <hello@galle.com>",
-          to: "hello@galle.com",
+        sendResendEmail({
+          to: inbox,
           subject: `Contact form: ${name}`,
           text: `From: ${name} <${email}>\n\n${message}`,
         }),
-        resend.emails.send({
-          from: "GALLE <hello@galle.com>",
+        sendResendEmail({
           to: email,
           subject: "We received your message",
           text: `Hi ${name},\n\nThank you for reaching out. We will respond within 2 business days.\n\n— Maison GALLE`,
